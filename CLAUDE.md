@@ -28,7 +28,7 @@ Unit tests run on the JVM: Android's `org.json` is a stub there, so the real `or
 
 Room schemas are exported to `app/schemas/`; a schema change needs a version bump and migration so libraries survive app updates (UPD-8).
 
-Release: bump `versionCode`/`versionName` in `app/build.gradle.kts`, build signed release, create GitHub release tagged `v<versionName>` with the APK attached. The in-app updater compares that tag and `versionCode`; the repo is set by `BuildConfig.GITHUB_REPO`.
+Release: bump `versionCode`/`versionName` in `app/build.gradle.kts`, commit, push tag `v<versionName>`; `.github/workflows/release.yml` builds the signed APK (keystore from repo secrets) and publishes the GitHub release with one asset, `MyMusicApp.apk`. `site/index.html` is the GitHub Pages download page (deployed by `pages.yml`); it follows the design system and links to `releases/latest/download/MyMusicApp.apk`. The in-app updater compares that tag and `versionCode`; the repo is set by `BuildConfig.GITHUB_REPO`.
 
 ## Architecture
 

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Music App</title>
+<meta name="description" content="A calm, distraction-free music player for Android. Your songs stay on your phone and play without internet.">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#f7f0e4">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%236b4423'/%3E%3Cg fill='%23f7f0e4' transform='translate(54 54) scale(0.105) translate(-242 -254)'%3E%3Cpolygon points='206,150 352,116 352,160 206,194'/%3E%3Crect x='196' y='160' width='22' height='200' rx='11'/%3E%3Crect x='340' y='126' width='22' height='200' rx='11'/%3E%3Cellipse cx='166' cy='360' rx='44' ry='33' transform='rotate(-22 166 360)'/%3E%3Cellipse cx='310' cy='326' rx='44' ry='33' transform='rotate(-22 310 326)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap">
+<style>
+  /* Tokens from design-system/tokens.json: four colours, light only, flat. */
+  :root {
+    --surface: #f7f0e4;
+    --fill: #dcc8a8;
+    --ink: #2b1d14;
+    --accent: #6b4423;
+    --press-overlay: rgba(43, 29, 20, 0.10);
+    --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font: 400 18px/26px var(--font-sans);
+    overflow-wrap: break-word;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1, h2, p, ol { margin: 0; }
+  h1 { margin-top: 16px; font-size: 28px; line-height: 34px; font-weight: 700; }
+  h2 { margin-top: 48px; font-size: 24px; line-height: 30px; font-weight: 700; }
+  strong { font-weight: 700; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .logo { display: block; width: 96px; height: 96px; border-radius: 24px; }
+  .tagline { margin-top: 8px; }
+
+  /* The one accent shape: Download. */
+  .download {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 96px;
+    margin-top: 24px;
+    padding: 12px 24px 12px 12px;
+    border-radius: 24px;
+    background: var(--accent);
+    color: var(--surface);
+    text-decoration: none;
+  }
+  .download:active::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--press-overlay); }
+  .disc { flex: none; display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--surface); color: var(--accent); }
+  .disc svg { width: 40px; height: 40px; fill: currentColor; }
+  .label { display: block; font-size: 22px; line-height: 28px; font-weight: 700; }
+
+  .steps { list-style: none; padding: 0; margin-top: 24px; display: flex; flex-direction: column; gap: 20px; counter-reset: step; }
+  .steps li { counter-increment: step; display: flex; gap: 16px; align-items: flex-start; }
+  .steps li::before {
+    content: counter(step);
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--fill);
+    font-weight: 700;
+  }
+  .steps p { padding-top: 9px; }
+
+  .note { display: flex; gap: 16px; margin-top: 24px; padding: 16px; border-radius: 16px; background: var(--fill); }
+  .note svg { flex: none; width: 32px; height: 32px; fill: currentColor; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Material Symbols Rounded, weight 500 (Apache-2.0), as in app/src/main/res/drawable/ic_*.xml -->
+  <symbol id="i-download" viewBox="0 -960 960 960"><path d="M467.34-331.32q-5.95-2.48-11.45-7.94L302.26-492.89q-10.19-10.47-9.69-24.51.5-14.04 10.3-24.23 10.68-10.23 24.81-10.1 14.12.14 24.32 10.34l93.93 94.69v-325.21q0-14.4 9.88-24.35 9.87-9.96 24.37-9.96 14.49 0 24.19 9.96 9.7 9.95 9.7 24.35v325.21L609-541.39q10-10.2 23.61-9.96 13.62.25 24.23 10.46 10.09 10.22 9.98 24.47-.12 14.25-10.32 24.53L504.11-339.26q-5.52 5.46-11.62 7.94-6.09 2.49-12.65 2.49-6.56 0-12.5-2.49Zm-245.19 177.3q-27.6 0-47.86-20.27-20.27-20.26-20.27-47.86v-108.94q0-14.42 9.87-24.24 9.87-9.82 24.37-9.82 14.5 0 24.2 9.82 9.69 9.82 9.69 24.24v108.94h515.7v-108.94q0-14.42 9.87-24.24 9.87-9.82 24.35-9.82 14.48 0 24.31 9.82 9.84 9.82 9.84 24.24v108.94q0 27.6-20.34 47.86-20.33 20.27-48.03 20.27h-515.7Z"/></symbol>
+  <symbol id="i-info" viewBox="0 -960 960 960"><path d="M506.29-286.75q9.34-9.38 9.34-23.25v-177.37q0-13.87-9.46-23.25t-23.3-9.38q-13.83 0-23.16 9.38-9.34 9.38-9.34 23.25V-310q0 13.87 9.46 23.25t23.3 9.38q13.83 0 23.16-9.38Zm-.28-313.89q10.58-10.24 10.58-25.36 0-16.24-10.52-26.92-10.51-10.67-26.05-10.67-15.81 0-26.21 10.67-10.4 10.68-10.4 26.8 0 15.27 10.58 25.49 10.58 10.22 26.01 10.22 15.43 0 26.01-10.23ZM480.3-74.02q-84.2 0-158.04-31.88-73.84-31.88-129.16-87.2-55.32-55.32-87.2-129.2-31.88-73.88-31.88-158.17 0-84.28 31.88-158.2 31.88-73.91 87.16-128.74 55.28-54.84 129.18-86.82 73.9-31.99 158.21-31.99 84.3 0 158.25 31.97 73.94 31.97 128.75 86.77 54.82 54.8 86.79 128.88 31.98 74.08 31.98 158.33 0 84.24-31.99 158.07-31.98 73.84-86.82 128.95-54.83 55.1-128.87 87.17Q564.5-74.02 480.3-74.02Zm.2-68.13q140.54 0 238.95-98.75 98.4-98.76 98.4-239.6 0-140.54-98.22-238.95-98.21-98.4-239.75-98.4-140.16 0-238.95 98.22-98.78 98.21-98.78 239.75 0 140.16 98.75 238.95 98.76 98.78 239.6 98.78ZM480-480Z"/></symbol>
+</svg>
+
+<main>
+  <svg class="logo" viewBox="0 0 108 108" role="img" aria-label="My Music App logo">
+    <rect width="108" height="108" fill="#6b4423"/>
+    <g fill="#f7f0e4" transform="translate(54 54) scale(0.105) translate(-242 -254)">
+      <polygon points="206,150 352,116 352,160 206,194"/>
+      <rect x="196" y="160" width="22" height="200" rx="11"/>
+      <rect x="340" y="126" width="22" height="200" rx="11"/>
+      <ellipse cx="166" cy="360" rx="44" ry="33" transform="rotate(-22 166 360)"/>
+      <ellipse cx="310" cy="326" rx="44" ry="33" transform="rotate(-22 310 326)"/>
+    </g>
+  </svg>
+  <h1>My Music App</h1>
+  <p class="tagline">A calm, distraction-free music player. Your songs stay on your phone and play without internet.</p>
+
+  <a class="download" id="download" href="https://github.com/codetiger/My-Music-App/releases/latest/download/MyMusicApp.apk">
+    <span class="disc"><svg aria-hidden="true"><use href="#i-download"/></svg></span>
+    <span>
+      <span class="label">Download the App</span>
+      <span id="download-sub">For Android 15 or newer</span>
+    </span>
+  </a>
+
+  <h2>Install It</h2>
+  <ol class="steps">
+    <li><p>Open this page in Chrome on the phone and tap <strong>Download the App</strong>. If Chrome asks, tap <strong>Download anyway</strong>.</p></li>
+    <li><p>When it finishes, tap <strong>Open</strong>.</p></li>
+    <li><p>If the phone says this source isn't allowed, tap <strong>Settings</strong>, turn on <strong>Allow from this source</strong>, then go back.</p></li>
+    <li><p>Tap <strong>Install</strong>, then <strong>Open</strong>, and follow <strong>Phone Setup</strong> in the app.</p></li>
+  </ol>
+
+  <div class="note">
+    <svg aria-hidden="true"><use href="#i-info"/></svg>
+    <p>On Xiaomi, Redmi and Poco phones, wait for the security check, then tap <strong>Install anyway</strong>. If it asks for a Mi account, tap <strong>Cancel</strong> and try again.</p>
+  </div>
+</main>
+
+<script>
+  // Shows the newest version and size. The button works without this: releases/latest/download
+  // always points at the newest APK.
+  fetch("https://api.github.com/repos/codetiger/My-Music-App/releases/latest")
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (release) {
+      if (!release) return;
+      var apk = (release.assets || []).filter(function (a) { return /\.apk$/.test(a.name); })[0];
+      if (!apk) return;
+      document.getElementById("download").href = apk.browser_download_url;
+      document.getElementById("download-sub").textContent =
+        "Version " + String(release.tag_name).replace(/^v/, "") + ", about " + Math.round(apk.size / 1048576) + " MB";
+    })
+    .catch(function () {});
+</script>
+</body>
+</html>

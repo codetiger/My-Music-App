@@ -1,0 +1,96 @@
+# Builds the signed APK and publishes the GitHub release the in-app updater reads (UPD-1, UPD-2).
+# Start it by pushing a tag that matches versionName in app/build.gradle.kts:
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   RELEASE_KEYSTORE_BASE64   base64 of the .jks file (base64 -i release.jks | pbcopy)
+#   RELEASE_STORE_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_KEY_PASSWORD
+# Every update must be signed with the same key, so this must be the key that signed earlier releases.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check the tag matches versionName
+        run: |
+          version=$(grep -Po 'versionName = "\K[^"]+' app/build.gradle.kts)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match versionName $version in app/build.gradle.kts"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Write signing config
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::RELEASE_KEYSTORE_BASE64 is not set"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.jks
+          {
+            echo "storeFile=release.jks"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > keystore.properties
+
+      - name: Test and build
+        run: ./gradlew testDebugUnitTest assembleRelease
+
+      # A missing signing config gives app-release-unsigned.apk instead, which phones won't install.
+      - name: Check the APK is signed
+        run: |
+          apk=app/build/outputs/apk/release/app-release.apk
+          test -f "$apk" || { echo "::error::Signed APK not found"; ls app/build/outputs/apk/release; exit 1; }
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner
+          "$apksigner" verify --print-certs "$apk" | tee certs.txt
+          {
+            echo "### My Music App $VERSION"
+            echo '```'
+            grep 'SHA-256' certs.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # One APK per release with a fixed name: the updater takes the first .apk asset, and the
+      # download page links to releases/latest/download/MyMusicApp.apk.
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk MyMusicApp.apk
+          sha256sum MyMusicApp.apk > MyMusicApp.apk.sha256
+          gh release create "$GITHUB_REF_NAME" MyMusicApp.apk MyMusicApp.apk.sha256 \
+            --title "My Music App $VERSION" --generate-notes --verify-tag
+
+      - name: Remove signing files
+        if: always()
+        run: rm -f release.jks keystore.properties
