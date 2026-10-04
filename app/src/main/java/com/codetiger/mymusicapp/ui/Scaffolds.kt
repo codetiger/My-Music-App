@@ -64,7 +64,7 @@ fun TabScreen(tab: Tab, primaryPlay: Boolean = false, content: @Composable Colum
     val nav = LocalNav.current
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f).fillMaxWidth()) { content() }
-        BottomArea(showNowPlaying = true, primaryPlay = primaryPlay)
+        BottomArea(showNowPlaying = true, primaryPlay = primaryPlay, offerDefaultList = tab == Tab.Home)
         TabBar(selected = tab, onSelect = { selected ->
             // Home is the root; Add Song sits on top of it. (Saved tab state would bring Add Song
             // back when Home is chosen, since Home is also the start screen.)
@@ -99,22 +99,26 @@ fun BackScreen(
 }
 
 @Composable
-private fun BottomArea(showNowPlaying: Boolean, primaryPlay: Boolean = false) {
+private fun BottomArea(showNowPlaying: Boolean, primaryPlay: Boolean = false, offerDefaultList: Boolean = false) {
     val ui = LocalUi.current
     Column(Modifier.fillMaxWidth().padding(bottom = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S3)) {
         MessageBar(ui.messages)
-        if (showNowPlaying) NowPlayingArea(primaryPlay)
+        if (showNowPlaying) NowPlayingArea(primaryPlay, offerDefaultList)
     }
 }
 
-/** The current song, or once the player is ready and holds nothing, the default list to play. */
+/**
+ * The current song while it plays or was left part-way. Otherwise, once the player is ready and on
+ * Home only ([offerDefaultList]), the default list to play (HOME-2); a finished list counts as
+ * nothing loaded, so Play doesn't restart it.
+ */
 @Composable
-private fun NowPlayingArea(primaryPlay: Boolean) {
+private fun NowPlayingArea(primaryPlay: Boolean, offerDefaultList: Boolean) {
     val app = LocalApp.current
     val ui = LocalUi.current
     val nav = LocalNav.current
     val state by app.player.state.collectAsStateWithLifecycle()
-    if (state.hasSong) {
+    if (state.hasSong && !state.ended) {
         val songFlow = remember(state.currentSongId) { state.currentSongId?.let { app.library.song(it) } ?: flowOf<Song?>(null) }
         val song by songFlow.collectAsStateWithLifecycle(initialValue = null)
         song?.let {
@@ -127,7 +131,7 @@ private fun NowPlayingArea(primaryPlay: Boolean) {
                 primary = primaryPlay,
             )
         }
-    } else if (state.connected) {
+    } else if (offerDefaultList && state.connected) {
         val settings = rememberSettings()
         val lists by app.library.playlistSummaries.collectAsStateWithLifecycle(initialValue = null)
         val default = lists?.let { defaultListOf(settings.defaultList, it) } ?: return
