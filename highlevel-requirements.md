@@ -12,7 +12,7 @@ A standalone Android music player that lets one person aged 60+ save songs they 
 
 - Add a song by pasting or sharing a YouTube, Facebook or Instagram link or a direct MP3 link (also when the link sits inside a forwarded WhatsApp message), by sharing a song, video or voice note from WhatsApp, or by picking an audio file.
 - Every added song is downloaded to the phone, so the whole library plays offline.
-- Play any saved song within 2 taps of opening the app (Songs → Play).
+- Play any saved song from Home with one tap on its **Play** button; lists and songs share one screen.
 - Feel personal: the app greets the user by name ("Murali's Music App") and shows their own photo, redrawn as a simple line drawing, as its logo.
 - Never show ads, sign-ups, or recommendations the user did not ask for.
 
@@ -36,7 +36,7 @@ Every screen does one job, uses big plain words, and forgives mistakes.
 | See it easily | Body text 20 sp minimum, titles 28 sp. Contrast 7:1 (WCAG AAA). Follows the phone's text-size setting, plus an app Text Size choice in Settings. Titles wrap; text is never cut off. |
 | Hit it easily | Touch targets 64 × 64 dp minimum, 16 dp apart. Main Play button 96 dp. No swipe-only or long-press-only actions. |
 | Words, not just icons | Every button has an icon and a text label ("Play", "Next", "Add Song"). No jargon like "queue", "sync", "buffer". |
-| Few choices | One job per screen; its main action is the largest button, in the top half. Flat navigation: 3 bottom tabs and a labelled **Settings** button in the title bar; no hidden menus or hamburger icon. |
+| Few choices | One job per screen; its main action is the largest button, in the top half. Flat navigation: 2 bottom tabs (Home and Add Song) and a labelled **Settings** button in the title bar; no hidden menus or hamburger icon. |
 | Forgive mistakes | Removing a song or deleting a list asks first, then moves it to Recently Removed for 30 days, from where **Put Back** restores it. |
 | Always know where you are | Large screen title on every page. A "Now Playing" bar is always visible at the bottom. |
 | Plain messages | Short on-screen text ("Song saved on your phone", "No internet — this song will download later"). No error codes, no sounds or voice. |
@@ -50,14 +50,14 @@ The app has four areas the user touches daily and one settings area they rarely 
 ```mermaid
 flowchart LR
     A["<b>Add Music</b><br/>Paste a link<br/>Share from YouTube, Facebook,<br/>Instagram, WhatsApp<br/>Pick an audio file<br/>Downloads every song"]
-    B["<b>Songs</b><br/>All songs, search and sort<br/>Song screen: edit or remove<br/>Download status"]
+    B["<b>Songs</b><br/>Listed on Home, search and sort<br/>Song screen: edit or remove<br/>Download status"]
     C["<b>Playlists</b><br/>Favourites, Recently Played<br/>Your own lists<br/>Change Order"]
     D["<b>Player</b><br/>Play, Next, Back<br/>Shuffle, Repeat<br/>Up Next list<br/>Lock screen, Bluetooth, Android Auto"]
     A --> B --> C --> D
     S["<b>Settings</b><br/>Your name and photo · Text size · Default playlist · Storage · Phone setup<br/>(app and downloader updates run on their own)"]
 ```
 
-Songs come in once through Add Music, live in Songs, get grouped into Playlists, and play in the Player. Settings sits underneath all four.
+Songs come in once through Add Music, are listed on Home, get grouped into Playlists, and play in the Player. Settings sits underneath all four.
 
 ## 4. Functional requirements
 
@@ -74,7 +74,7 @@ Everything below ships in the first release; nothing is deferred.
 | FL-5 | A preview shows the drawing large with **Use This** and **Try Again**. Only the drawing is kept; the original photo is not stored. Skipped, the app uses its standard music-note logo. |
 | FL-6 | The drawing appears as a 48 dp circle beside the app title in the title bar of every screen. |
 | FL-7 | **Phone Setup** follows, one step per screen, each with a picture of what to tap, an **Open Settings** button that jumps to the right Android page, and **Skip**. When the user comes back, the app checks the result where Android allows it and shows a green tick. Steps: (1) **Allow updates** — let this app install its own updates ("Install unknown apps"); (2) **Keep music playing** — battery set to "No restrictions"; (3) on Xiaomi / Redmi / Poco only, **Autostart** on; (4) only if Android Auto is installed, **Use in the car** — written, numbered steps to turn on Android Auto's "Unknown sources" (Android Auto has no direct link to this page). The same steps can be run again from Settings → Phone Setup. |
-| FL-8 | After setup, Home shows the card "Put your picture on the home screen?" with **Add** and **No thanks**. **Add** asks Android to place a home-screen shortcut whose icon is the drawing; Android asks for one confirmation tap. Its short label is "Murali's Music" when that is 12 characters or fewer, otherwise the name alone ("Murali"); its long label is "Murali's Music App". The shortcut opens the app as normal. |
+| FL-8 | After setup, Home shows the card "Put your picture on the home screen?" with **Add** and **No thanks**. **Add** asks Android to place a home-screen shortcut whose icon is the drawing; Android asks for one confirmation tap. Its short label is "<name>'s Music" when that is 12 characters or fewer ("Ravi's Music"), otherwise the name alone ("Murali's Music" is 14, so "Murali"); its long label is "Murali's Music App". The shortcut opens the app as normal. |
 | FL-9 | The app's own icon and label in the app list stay the standard logo and "My Music App"; Android does not let an installed app change its own icon or name. The home-screen shortcut is how the photo reaches the home screen. |
 | FL-10 | Changing the name or photo in Settings (SET-3) updates the title bar and the home-screen shortcut straight away. |
 | FL-11 | The very first install (downloading the APK and letting the browser or file manager install it) happens before the app exists, so the app cannot guide it. A one-page install guide with pictures lives in the GitHub repo's README. |
@@ -83,9 +83,9 @@ Everything below ships in the first release; nothing is deferred.
 
 | ID | Requirement |
 | --- | --- |
-| HOME-1 | The title bar shows the drawing, the personalised title and a labelled **Settings** button. The three tab screens (Home, Songs, Add Song) have it; other screens show **Back** instead. |
+| HOME-1 | The title bar shows the drawing, the personalised title and a labelled **Settings** button. The two tab screens (Home, Add Song) have it; other screens show **Back** instead. |
 | HOME-2 | One big Play button. When the user left a song part-way, it reads "Continue: \<song\>" and resumes the same queue. Otherwise it plays the default playlist and reads "Play Favourites" (or that list's name). |
-| HOME-3 | Below it, big list tiles: Favourites, All Songs, Recently Played, the user's own lists, and **+ New List**. |
+| HOME-3 | Below it, "My Lists": big list tiles for Favourites, Recently Played, the user's own lists, and **+ New List**. There is no All Songs tile, because every song is listed further down Home (LIB-1). |
 | HOME-4 | At most one card is shown at a time, highest first: (1) "A new version is ready — Install" (UPD-3); (2) "Music may stop when the screen is off — Finish Setup" when a Phone Setup step the app can check is off; (3) "5 songs from WhatsApp or files couldn't be moved to this phone" with **See Names** and **OK** (SET-6); (4) "Tap Add Song to save your first song" on an empty library; (5) "Put your picture on the home screen?" (FL-8). Each card goes away once done or dismissed, and the next one shows. |
 | HOME-5 | The home-screen picture card is not shown on launchers that do not support pinned shortcuts. |
 
@@ -109,15 +109,15 @@ Everything below ships in the first release; nothing is deferred.
 | ADD-14 | **Duplicates:** a link is matched by the site's video ID (so youtu.be, youtube.com and music.youtube.com links to one video match), a file by a fingerprint of its contents. A match shows "This song is already in your library" with a **Play** button. If the match is in Recently Removed, it is put back instead and shows "Song put back in your library". |
 | ADD-15 | If a video is later removed from YouTube, Facebook or Instagram, the downloaded copy keeps playing from the phone. |
 
-### 4.4 Songs
+### 4.4 Songs (on Home)
 
 | ID | Requirement |
 | --- | --- |
-| LIB-1 | **Songs** tab: a search box at the top, sort buttons, then every song as a large row with picture, title, artist and a Play button. |
-| LIB-2 | Search by typing; results update as letters are typed and match title and artist. |
+| LIB-1 | There is no separate Songs tab. Home, below the list tiles, has a **Songs** section: a search box, sort buttons, then every song as a large row with picture, title, artist and a Play button. The whole of Home scrolls as one page. |
+| LIB-2 | Search by typing; results update as letters are typed and match title and artist. Search filters only the songs; the list tiles above stay. |
 | LIB-3 | Sort by **A–Z**, **Newest** or **Most Played**. A play counts once 30 s have played, or half the song if it is shorter. |
 | LIB-4 | Each song shows its state: "On your phone", "Downloading 40%", "Will download later" or "Can't be saved". |
-| LIB-5 | **Song screen:** tapping a song's name (in Songs, any list, or **Song Details** on Now Playing) opens it: big picture, title, artist, state and length, and the buttons **Play**, **Favourite** (or **Remove from Favourites**), **Add to List**, **Edit Name** (title and artist) and **Remove**. |
+| LIB-5 | **Song screen:** tapping a song's name (on Home, in any list, or **Song Details** on Now Playing) opens it: big picture, title, artist, state and length, and the buttons **Play**, **Favourite** (or **Remove from Favourites**), **Add to List**, **Edit Name** (title and artist) and **Remove**. |
 | LIB-6 | **Remove** asks "Remove this song?", then moves it to **Recently Removed** for 30 days. It leaves every list and Up Next; if it is playing, the next song starts. After 30 days its audio file is deleted. |
 | LIB-7 | **Recently Removed** (in Settings → Storage) lists removed songs and lists, each with **Put Back**. A song goes back to the library and to every list it was in, at the same place where possible. **Empty Now** asks "Delete these for good?" and frees the space at once. |
 
@@ -138,7 +138,7 @@ Everything below ships in the first release; nothing is deferred.
 | ID | Requirement |
 | --- | --- |
 | PLY-1 | Play / Pause, Next, Previous, and a seek bar with a large handle plus **Back 10 s / Ahead 10 s** buttons. |
-| PLY-2 | Tapping Play on a song plays it and then the rest of the list it was tapped in: that playlist, or in Songs the current sort or search results. **Play All** and **Shuffle** on a list do the same from its start. |
+| PLY-2 | Tapping Play on a song plays it and then the rest of the list it was tapped in: that playlist, or on Home the current sort or search results. **Play All** and **Shuffle** on a list do the same from its start. |
 | PLY-3 | Shuffle and Repeat (Off / All / One), labelled in words, apply to the current songs. |
 | PLY-4 | The in-app volume slider moves the phone's media volume, the same as the phone's volume buttons. |
 | PLY-5 | Keeps playing with the screen locked; controls on lock screen, notification, Bluetooth headset and Bluetooth car stereo. |
@@ -175,7 +175,7 @@ The app and the downloader update separately. Site fixes reach the phone silentl
 
 ## 5. Key screens
 
-Eight screens cover everything the user does; each has one main button, shown in the accent colour. Phone Setup (first launch and Settings) is a series of single-step screens and is not drawn here.
+Seven screens cover everything the user does; each has one main button, shown in the accent colour. Phone Setup (first launch and Settings) is a series of single-step screens and is not drawn here.
 
 ```text
 +----------------------------------+   +----------------------------------+
@@ -186,18 +186,21 @@ Eight screens cover everything the user does; each has one main button, shown in
 | +------------------------------+ |   | | Search: type a name...       | |
 | My Lists                         |   | +------------------------------+ |
 | +-------------+ +--------------+ |   | Sort [A-Z] [Newest] [Most Played]|
-| | Favourites  | | All Songs    | |   | [img] Song title 1          (>)  |
-| +-------------+ +--------------+ |   |       Artist name                |
+| | Favourites  | | Recently     | |   | [img] Song title 1          (>)  |
+| |             | | Played       | |   |       Artist name                |
 | +-------------+ +--------------+ |   | [img] Song title 2          (>)  |
-| |Recently Plyd| | + New List   | |   |       Artist · Downloading 40%   |
-| +-------------+ +--------------+ |   | [img] Song title 3          (>)  |
-|                                  |   |       Artist · Download later    |
-|                                  |   | [Now playing: Song 1     Pause ] |
-| [Now playing: Song title  Play ] |   |----------------------------------|
-|----------------------------------|   |   Home     *Songs*    Add Song   |
-|  *Home*     Songs     Add Song   |   +----------------------------------+
-+----------------------------------+                  SONGS
-                HOME
+| +-------------+ +--------------+ |   |       Artist · Downloading 40%   |
+| | Temple Songs| | + New List   | |   | [img] Song title 3          (>)  |
+| +-------------+ +--------------+ |   |       Artist · Download later    |
+| Songs                            |   | [img] Song title 4          (>)  |
+| +------------------------------+ |   |       Artist name                |
+| | Search: type a name...       | |   |                                  |
+| +------------------------------+ |   |                                  |
+| [Now playing: Song title  Play ] |   | [Now playing: Song 1     Pause ] |
+|----------------------------------|   |----------------------------------|
+|      *Home*        Add Song      |   |      *Home*        Add Song      |
++----------------------------------+   +----------------------------------+
+                HOME                           HOME, SCROLLED DOWN
 
 +----------------------------------+   +----------------------------------+
 | < Back            Song           |   | < Back        Now Playing        |
@@ -215,7 +218,7 @@ Eight screens cover everything the user does; each has one main button, shown in
 |                                  |   | [Up Next]       [Song Details]   |
 | [Now playing: Song 1     Pause ] |   | Volume  ---------O------------   |
 |----------------------------------|   +----------------------------------+
-|   Home     *Songs*    Add Song   |               NOW PLAYING
+|      *Home*        Add Song      |               NOW PLAYING
 +----------------------------------+
                 SONG
 
@@ -234,10 +237,10 @@ Eight screens cover everything the user does; each has one main button, shown in
 | + - - - - - - - - - - - - - - -+ |   |                                  |
 | | [img] Song title found       | |   | [Now playing: Song 1     Pause ] |
 | |       From YouTube · 4:05    | |   |----------------------------------|
-| |       [  Save Song  ]        | |   |  *Home*     Songs     Add Song   |
+| |       [  Save Song  ]        | |   |      *Home*        Add Song      |
 | + - - - - - - - - - - - - - - -+ |   +----------------------------------+
 |----------------------------------|                 PLAYLIST
-|   Home      Songs    *Add Song*  |
+|       Home        *Add Song*     |
 +----------------------------------+
               ADD SONG
 
@@ -263,7 +266,7 @@ Eight screens cover everything the user does; each has one main button, shown in
               SETTINGS
 ```
 
-- Three bottom tabs only: **Home**, **Songs**, **Add Song**. Tapping the Now Playing bar opens the full player. **Settings** sits in the title bar of the three tab screens.
+- Two bottom tabs only: **Home** and **Add Song**. Home holds both the lists and every song. Tapping the Now Playing bar opens the full player. **Settings** sits in the title bar of the two tab screens.
 - The main action sits in the top half of the screen and is the largest button there.
 - The title wraps to 2 lines when the name is long, as drawn; it is never shortened.
 - Home shows the personalised title from first launch, with the user's photo drawing `(o)` beside it. The Add Song preview card appears only after a link is pasted or shared; one more tap saves and downloads it.
@@ -281,7 +284,7 @@ Eight screens cover everything the user does; each has one main button, shown in
 | Credentials | None in the app: no API keys, no YouTube, Facebook or Instagram login. The project's GitHub repo is public so the update check needs no token. |
 | Distribution | APK downloaded from a GitHub Releases page and updated from there (section 4.8). Google Play does not allow apps that download from YouTube or that download code such as yt-dlp. |
 | Licence | GPL-3.0, as required by youtubedl-android. The repo describes the app as a personal music player, without "YouTube downloader" wording. |
-| App size | About 40–45 MB, arm64 only, because the downloader bundles Python, ffmpeg and QuickJS. |
+| App size | About 58 MB (measured, release build), arm64 only, because the downloader bundles Python, ffmpeg, ffprobe and QuickJS. |
 | Accessibility | WCAG 2.2 AAA contrast; works with TalkBack and with phone text size × app Text Size up to 200% without cut-off text. |
 | Ease of use | A first-time user adds and plays a song in under 2 minutes with no help. Tested with at least 3 people aged 60+. |
 | Speed | App opens to Home in under 2 s. Saved songs start in under 1 s. A newly added song starts playing in under 10 s on 4G (yt-dlp starts Python first, and playback reads the file as it downloads); the exact target is set after the prototype. |
@@ -299,7 +302,7 @@ A single offline-first Android app with no server of its own; the internet is us
 ```mermaid
 flowchart TB
     subgraph Phone["On the phone (native Android app)"]
-        SCR["<b>Screens</b><br/>Home · Songs · Song · Now Playing · Add Song · Lists · Settings · Phone Setup"]
+        SCR["<b>Screens</b><br/>Home · Song · Now Playing · Add Song · Lists · Settings · Phone Setup"]
         PLY["<b>Player service</b><br/>Queue, shuffle, repeat<br/>Lock screen, Bluetooth, Android Auto<br/>Plays from the file as it downloads"]
         LIB["<b>Library service</b><br/>Songs, playlists, search<br/>Favourites, recently played<br/>Recently Removed"]
         ADD["<b>Add Music service</b><br/>Paste, share or pick a file<br/>Finds links in text, spots duplicates<br/>Audio from WhatsApp videos (ffmpeg)<br/>Downloads every song"]
@@ -354,11 +357,11 @@ flowchart LR
 | Step | What happens | Details |
 | --- | --- | --- |
 | 1. Read photo | Load the chosen or taken photo upright and shrink it. | `ImageDecoder` (applies the photo's rotation); longest side scaled to 1024 px. A camera photo goes to a temporary file in the app's cache. |
-| 2. Find face and crop | Find the face and cut a square around it. | `android.media.FaceDetector` on an RGB\_565 copy. Take the largest face; crop a square centred just above the eye midpoint, about 4.5 × the eye distance wide, so hair and chin fit. No face found: the centre square of the photo. |
+| 2. Find face and crop | Find the face and cut a square around it. | `android.media.FaceDetector` on an RGB\_565 copy. Take the largest face; crop a square centred 0.2 × the eye distance above the eye midpoint, 5.5 × the eye distance wide, so hair and chin fit (tuned on a device: `FaceDetector` reports a smaller eye distance than measured by hand). No face found: the centre square of the photo. |
 | 3. Grey and smooth | Turn it grey, even out the light and remove skin texture. | Scale to 512 × 512 px; grey = 0.299 R + 0.587 G + 0.114 B. Stretch contrast so the 2nd–98th percentile spans black to white. Two passes of an edge-preserving (bilateral) blur, 5 × 5, so outlines stay sharp while wrinkles and noise fade. |
-| 4. Find outlines (XDoG) | Mark where brightness changes sharply: the edges of face, eyes, glasses, hair. | Blur the grey image twice: G₁ with radius σ and G₂ with radius k·σ. D = G₁ − τ·G₂. Each pixel's ink level = 1 (paper) if D ≥ ε, else 1 + tanh(φ·(D − ε)). Starting values on a 0–1 scale: σ = 1.2 px, k = 1.6, τ = 0.98, ε = −0.005, φ = 100, tuned on real photos in the prototype. Flat areas stay white whatever their brightness, so the result is outlines, not shading. |
-| 5. Clean up lines | Remove specks and make lines bold enough to see. | Pixels below 0.5 count as ink. Drop ink blobs smaller than about 40 px. Thicken lines by 1 px for the 512 px drawing; for the icon version run step 4 with σ = 2.0 and thicken by 2 px, so lines survive at small icon size. |
-| 6. Colour and circle | Draw dark ink on light paper inside a circle. | Ink #1A1A1A on warm white #FAF7F0 (well above 7:1 contrast), circular mask and a thin dark ring around the edge. |
+| 4. Find outlines (XDoG) | Mark where brightness changes sharply: the edges of face, eyes, glasses, hair. | Blur the grey image twice: G₁ with radius σ and G₂ with radius k·σ. D = G₁ − τ·G₂. Each pixel's ink level = 1 (paper) if D ≥ ε, else 1 + tanh(φ·(D − ε)). Values on a 0–1 scale, tuned on real portraits: σ = 1.2 px, k = 2.0, τ = 0.99, ε = −0.005, φ = 100 (the starting values k = 1.6, τ = 0.98 gave faint, broken lines). Edges fade out beyond 30 % of the size from the centre (down to 40 % strength at the circle's edge), so background clutter drops away while the centred face stays. Flat areas stay white whatever their brightness, so the result is outlines, not shading. |
+| 5. Clean up lines | Remove specks and make lines bold enough to see. | Pixels below 0.5 count as ink, and faint pixels (below 0.9) touching a line join it, so dashes become strokes. Drop ink blobs smaller than about 80 px. Thicken lines by 1 px for the 512 px drawing; for the icon version run step 4 with σ = 2.0, drop blobs under 150 px and thicken by 2 px, so lines survive at small icon size. |
+| 6. Colour and circle | Draw dark ink on light paper inside a circle. | Ink #2B1D14 on paper #F7F0E4 (the app's own `ink` and `surface`, 14:1), circular mask and a ring 2.5 % of the diameter wide around the edge. |
 | 7. Save drawing and icon | Keep only the drawing; throw the photo away. | Save a 512 px PNG (title bar, Settings, preview) and a 432 px adaptive-icon PNG with the drawing inside the centre 66 % safe zone (home-screen shortcut, via `Icon.createWithAdaptiveBitmap`). Delete the temporary camera file and release the photo from memory. |
 
 The filter is about 200 lines of Kotlin using separable blurs, so a 512 px image takes well under a second on a mid-range Android 15 phone. If the prototype shows the drawings look poor, a small on-device line-art model (TensorFlow Lite, about 5 MB) can replace steps 3–4 at the cost of app size.
@@ -370,7 +373,7 @@ The filter is about 200 lines of Kotlin using separable blurs, so a 512 px image
 | Song | id, title, artist, source\_type (youtube / facebook / instagram / mp3\_link / whatsapp / file), source\_url, source\_id (site's video ID), file\_hash (SHA-256), file\_path, file\_size, download\_status (queued / downloading / waiting\_retry / done / failed), failure\_reason (private / removed / unsupported / gave\_up), first\_failed\_at, duration, thumbnail\_path, added\_at, play\_count, last\_played\_at, removed\_at |
 | Playlist | id, name, colour, built\_in (all\_songs / favourites / recently\_played / none), position, removed\_at |
 | PlaylistSong | playlist\_id, song\_id, position. Rows stay while a song or list is in Recently Removed, so **Put Back** restores them. |
-| PlayerState | current\_song\_id, position\_ms, queue (song ids), queue\_source (playlist id, or Songs with its sort or search), shuffle, repeat |
+| PlayerState | current\_song\_id, position\_ms, queue (song ids), queue\_source (playlist id, or Home's song list with its sort or search), shuffle, repeat |
 | Settings | user\_name, user\_photo\_drawing\_path, text\_size (normal / large / extra\_large), home\_shortcut\_added, default\_playlist\_id, dismissed\_cards, restore\_skipped\_songs, last\_app\_update\_check, ytdlp\_version, ytdlp\_previous\_version, ytdlp\_skipped\_version, ytdlp\_site\_failure\_streak, last\_ytdlp\_update\_check |
 
 Favourites and own lists are Playlist rows with PlaylistSong entries; All Songs and Recently Played are built from Song (Recently Played: the 50 most recent `last_played_at`).
@@ -383,7 +386,7 @@ Favourites and own lists are Playlist rows with PlaylistSong entries; All Songs 
 | --- | --- |
 | Platform | Android 15+ phones only. Main target: Xiaomi / Redmi / Poco on HyperOS. Both trial users are on Android 15+. |
 | Scope | Minimum feature set; everything in section 4 ships in the first release. |
-| Navigation | Tabs: Home / Songs / Add Song. A labelled Settings button in the title bar. A Song screen holds Favourite, Add to List, Edit Name and Remove. No fixed limit on actions per screen. |
+| Navigation | Tabs: Home / Add Song. Home shows the lists and, below them, every song with search and sort; there is no separate Songs tab. A labelled Settings button in the title bar. A Song screen holds Favourite, Add to List, Edit Name and Remove. No fixed limit on actions per screen. |
 | Text size | Normal / Large / Extra Large in Settings, on top of the phone's setting, capped at 2 ×. |
 | Downloader | yt-dlp on the phone for every site, with QuickJS bundled; it updates itself from yt-dlp's GitHub Releases, separately from app updates. A new version is tested against the current one before use. |
 | Sites | YouTube (incl. Shorts) and YouTube Music, single videos only; Facebook public videos and reels; Instagram public reels and posts (best effort); direct .mp3 / .m4a links. Links are found inside any shared or pasted text. |

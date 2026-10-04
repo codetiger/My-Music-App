@@ -2,7 +2,7 @@
 
 The top of every screen: who the app belongs to, where you are, and the one way to Settings or Back.
 
-**Tab screens** (Home, Songs, Add Song): the photo drawing (`size-avatar`) on the left, the personalised title in `title`, and a stacked **Settings** button on the right.
+**Tab screens** (Home, Add Song): the photo drawing (`size-avatar`) on the left, the personalised title in `title`, and a stacked **Settings** button on the right.
 **Every other screen**: a **Back** button (arrow and word), then the screen title.
 
 ## The consumer provides

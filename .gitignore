@@ -36,3 +36,6 @@ google-services.json
 
 # macOS
 .DS_Store
+
+# Release signing (keep a copy of the keystore and this file off GitHub)
+keystore.properties

@@ -1,6 +1,6 @@
 # SortButtons
 
-Choose one short option that changes what a list shows: **A–Z**, **Newest**, **Most Played** on Songs.
+Choose one short option that changes what a list shows: **A–Z**, **Newest**, **Most Played** on the "Songs" section of Home.
 
 ## Rules
 - Flat pills (`radius-full`), 64dp tall. Pills mean "choose one"; rounded rectangles mean "do something".

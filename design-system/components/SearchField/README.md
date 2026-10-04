@@ -1,6 +1,6 @@
 # SearchField
 
-The search box at the top of Songs; results update with every letter, matching title and artist.
+The search box at the top of the "Songs" section on Home; results update with every letter, matching title and artist.
 
 ## Rules
 - Flat `fill` shape, 64dp tall, `radius-md`, no border. Search icon first; placeholder "Type a song or singer" in italic `ink`.

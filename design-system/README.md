@@ -85,7 +85,7 @@ My Music App is a music player for one person aged 60 or more. The look is flat,
 ## Layout
 
 - Portrait only. Title bar, screen title, main action in the top half, then content.
-- Tab screens end with the Now Playing bar above the three tabs. Other screens show **Back** and no tabs.
+- Two tabs: **Home** (lists and every song) and **Add Song**. Tab screens end with the Now Playing bar above the tabs. Other screens show **Back** and no tabs.
 - No swipe-only or long-press-only actions, no hidden menus, no floating button. **Move Up** / **Move Down** always exist beside any drag.
 
 ## States and motion
@@ -98,7 +98,7 @@ My Music App is a music player for one person aged 60 or more. The look is flat,
 
 - Material Symbols Rounded, weight 500, 28dp in buttons and rows, 40dp in the main button and tiles, always in `ink` (or `on-accent` on accent). Outline by default; filled for the selected tab, transport and the failed status.
 - An icon always sits beside or above its word; TalkBack reads the word.
-- Names: Home `home`, Songs `library_music`, Add Song `add_circle`, Settings `settings`, Back `arrow_back`, Play `play_arrow`, Pause `pause`, Previous `skip_previous`, Next `skip_next`, Back 10 s `replay_10`, Ahead 10 s `forward_10`, Shuffle `shuffle`, Repeat `repeat` / `repeat_one`, Up Next `queue_music`, Song Details `info`, Favourite `favorite`, Add to List `playlist_add`, Edit Name `edit`, Remove `delete`, Put Back `restore_from_trash`, Change Order `swap_vert`, Move Up `arrow_upward`, Move Down `arrow_downward`, Paste Link `content_paste`, Pick a File `audio_file`, Save Song `download`, Take Photo `photo_camera`, Choose Photo `image`, Search `search`, Clear `close`, Volume `volume_down` / `volume_up`, Open Settings `open_in_new`.
+- Names: Home `home`, All Songs `library_music`, Add Song `add_circle`, Settings `settings`, Back `arrow_back`, Play `play_arrow`, Pause `pause`, Previous `skip_previous`, Next `skip_next`, Back 10 s `replay_10`, Ahead 10 s `forward_10`, Shuffle `shuffle`, Repeat `repeat` / `repeat_one`, Up Next `queue_music`, Song Details `info`, Favourite `favorite`, Add to List `playlist_add`, Edit Name `edit`, Remove `delete`, Put Back `restore_from_trash`, Change Order `swap_vert`, Move Up `arrow_upward`, Move Down `arrow_downward`, Paste Link `content_paste`, Pick a File `audio_file`, Save Song `download`, Take Photo `photo_camera`, Choose Photo `image`, Search `search`, Clear `close`, Volume `volume_down` / `volume_up`, Open Settings `open_in_new`.
 - Logos: `assets/Logos/logo-mark.svg` and `assets/Logos/app-icon.svg`.
 
 ## In Compose
