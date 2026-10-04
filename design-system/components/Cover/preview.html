@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../bundle.css">
+<title>My Music App</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--surface); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; width:960px; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .accent { fill:var(--accent); }
+  .fill { fill:var(--fill); }
+  .ink { fill:var(--ink); }
+  .ground { fill:var(--surface); }
+  .words { position:absolute; left:var(--space-6); bottom:var(--space-6); max-width:440px; }
+  .name { margin:0; font-size:88px; line-height:.95; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
+  .tag { margin:var(--space-3) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      accent 160x240 bled off the top (the main-action colour) · fill 160x160 · fill 128x192 bleeding off the right · ink 64x24 pill once: the whole four-colour palette, flat, about 30% of 960x288
+  arrangement one tall accent slab with two flat fill satellites, bottoms on one line at y=224, space-4 gutters
+  pattern     discs, from "64dp targets, a 96dp Play disc, round only for Play and the avatar": one size-play disc cut from the slab, four size-avatar discs at a size-target pitch, one size-target disc
+  scales      gutters space-4; pitch size-target (64); discs size-play / size-target / size-avatar; corners radius-md, pill radius-full
+-->
+<rect class="accent" x="16" y="-16" width="160" height="240" rx="16"/>
+<rect class="fill" x="192" y="64" width="160" height="160" rx="16"/>
+<rect class="fill" x="368" y="32" width="128" height="192" rx="16"/>
+<rect class="ink" x="16" y="240" width="64" height="24" rx="12"/>
+<circle class="ground" cx="96" cy="128" r="48"/>
+<circle class="accent" cx="240" cy="112" r="24"/>
+<circle class="accent" cx="304" cy="112" r="24"/>
+<circle class="ground" cx="240" cy="176" r="24"/>
+<circle class="accent" cx="304" cy="176" r="24"/>
+<circle class="ground" cx="432" cy="128" r="32"/>
+</svg>
+</div>
+<div class="words">
+  <h1 class="name">My Music<br>App</h1>
+  <p class="tag">Four colours, flat shapes, big words.</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Music App design system</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--surface); color: var(--ink); font-family: var(--font-sans); }
+  main { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 16px; }
+  h1 { width: 100%; margin: 0; font-size: 24px; }
+  h2 { width: 100%; margin: 24px 0 0; font-size: 20px; }
+  p { width: 100%; margin: 0; }
+  figure { margin: 0; max-width: 100%; }
+  figcaption { font-weight: 700; margin-bottom: 8px; }
+  a { color: var(--accent); }
+  iframe { max-width: 100%; border: 0; border-radius: 16px; background: var(--surface); outline: 1px solid var(--fill); }
+</style>
+</head>
+<body>
+<main>
+<h1>My Music App design system</h1>
+<p>Open this file in a browser to see every component. The rules are in <a href="README.md">README.md</a> and each component's README.</p>
+<h2>Cover</h2>
+<figure><figcaption>Cover</figcaption><iframe src="components/Cover/preview.html" title="Cover" style="width:980px;height:304px"></iframe></figure>
+<h2>Screens</h2>
+<figure><figcaption>HomeScreen · <a href="components/HomeScreen/README.md">rules</a></figcaption><iframe src="components/HomeScreen/preview.html" title="HomeScreen" style="width:460px;height:936px"></iframe></figure>
+<figure><figcaption>NowPlayingScreen · <a href="components/NowPlayingScreen/README.md">rules</a></figcaption><iframe src="components/NowPlayingScreen/preview.html" title="NowPlayingScreen" style="width:460px;height:1376px"></iframe></figure>
+<h2>Structure</h2>
+<figure><figcaption>NowPlayingBar · <a href="components/NowPlayingBar/README.md">rules</a></figcaption><iframe src="components/NowPlayingBar/preview.html" title="NowPlayingBar" style="width:460px;height:146px"></iframe></figure>
+<figure><figcaption>TabBar · <a href="components/TabBar/README.md">rules</a></figcaption><iframe src="components/TabBar/preview.html" title="TabBar" style="width:460px;height:126px"></iframe></figure>
+<figure><figcaption>TitleBar · <a href="components/TitleBar/README.md">rules</a></figcaption><iframe src="components/TitleBar/preview.html" title="TitleBar" style="width:460px;height:316px"></iframe></figure>
+<h2>Actions</h2>
+<figure><figcaption>Button · <a href="components/Button/README.md">rules</a></figcaption><iframe src="components/Button/preview.html" title="Button" style="width:460px;height:486px"></iframe></figure>
+<figure><figcaption>ChoiceRow · <a href="components/ChoiceRow/README.md">rules</a></figcaption><iframe src="components/ChoiceRow/preview.html" title="ChoiceRow" style="width:460px;height:346px"></iframe></figure>
+<figure><figcaption>PlayerControls · <a href="components/PlayerControls/README.md">rules</a></figcaption><iframe src="components/PlayerControls/preview.html" title="PlayerControls" style="width:460px;height:356px"></iframe></figure>
+<figure><figcaption>SortButtons · <a href="components/SortButtons/README.md">rules</a></figcaption><iframe src="components/SortButtons/preview.html" title="SortButtons" style="width:460px;height:166px"></iframe></figure>
+<h2>Content</h2>
+<figure><figcaption>Avatar · <a href="components/Avatar/README.md">rules</a></figcaption><iframe src="components/Avatar/preview.html" title="Avatar" style="width:460px;height:306px"></iframe></figure>
+<figure><figcaption>ListTile · <a href="components/ListTile/README.md">rules</a></figcaption><iframe src="components/ListTile/preview.html" title="ListTile" style="width:460px;height:486px"></iframe></figure>
+<figure><figcaption>SettingsRow · <a href="components/SettingsRow/README.md">rules</a></figcaption><iframe src="components/SettingsRow/preview.html" title="SettingsRow" style="width:460px;height:536px"></iframe></figure>
+<figure><figcaption>SongPreviewCard · <a href="components/SongPreviewCard/README.md">rules</a></figcaption><iframe src="components/SongPreviewCard/preview.html" title="SongPreviewCard" style="width:460px;height:556px"></iframe></figure>
+<figure><figcaption>SongRow · <a href="components/SongRow/README.md">rules</a></figcaption><iframe src="components/SongRow/preview.html" title="SongRow" style="width:460px;height:396px"></iframe></figure>
+<h2>Inputs</h2>
+<figure><figcaption>SearchField · <a href="components/SearchField/README.md">rules</a></figcaption><iframe src="components/SearchField/preview.html" title="SearchField" style="width:460px;height:206px"></iframe></figure>
+<figure><figcaption>Slider · <a href="components/Slider/README.md">rules</a></figcaption><iframe src="components/Slider/preview.html" title="Slider" style="width:460px;height:236px"></iframe></figure>
+<h2>Feedback</h2>
+<figure><figcaption>ConfirmDialog · <a href="components/ConfirmDialog/README.md">rules</a></figcaption><iframe src="components/ConfirmDialog/preview.html" title="ConfirmDialog" style="width:460px;height:416px"></iframe></figure>
+<figure><figcaption>Message · <a href="components/Message/README.md">rules</a></figcaption><iframe src="components/Message/preview.html" title="Message" style="width:460px;height:256px"></iframe></figure>
+<figure><figcaption>NoticeCard · <a href="components/NoticeCard/README.md">rules</a></figcaption><iframe src="components/NoticeCard/preview.html" title="NoticeCard" style="width:460px;height:576px"></iframe></figure>
+<figure><figcaption>SetupStep · <a href="components/SetupStep/README.md">rules</a></figcaption><iframe src="components/SetupStep/preview.html" title="SetupStep" style="width:460px;height:616px"></iframe></figure>
+<figure><figcaption>StatusLabel · <a href="components/StatusLabel/README.md">rules</a></figcaption><iframe src="components/StatusLabel/preview.html" title="StatusLabel" style="width:460px;height:216px"></iframe></figure>
+</main>
+</body>
+</html>
