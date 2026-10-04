@@ -1,16 +1,13 @@
 # TitleBar
 
-The top of every screen: who the app belongs to, where you are, and the one way to Settings or Back.
-
-**Tab screens** (Home, Add Song): the photo drawing (`size-avatar`) on the left, the personalised title in `title`, and a stacked **Settings** button on the right.
-**Every other screen**: a **Back** button (arrow and word), then the screen title.
+The fixed bar at the top of every screen that is not a tab: **Back** and where you are. Tab screens (Home, Add Song) have no title bar; they start with a PageHeader instead.
 
 ## The consumer provides
-- `title`: "Murali's Music App", or "My Music App" when no name was given.
-- `avatar`: the saved drawing, or `assets/Logos/logo-mark.svg`.
-- `onSettings` or `onBack`, never both.
+- `title`: the screen's name ("Song", "Now Playing", "Favourites", "Settings").
+- `onBack`.
 
 ## Rules
-- `surface` background, no divider line, no elevation, no colour change on scroll.
+- A **Back** button (arrow and word, `fill`), then the title in `title`. Never a bare arrow, never a menu.
+- `surface` background, at least `size-row-tall` (88dp), no divider line, no elevation, no colour change on scroll. It stays put while the page scrolls, so Back is always in reach.
 - The title wraps to two lines and is never cut off; at Extra Large text it may take three and the bar grows.
-- Settings and Back are flat `fill` buttons with a label, never a bare icon or a menu.
+- Phone Setup's Back goes to the previous step before it leaves.

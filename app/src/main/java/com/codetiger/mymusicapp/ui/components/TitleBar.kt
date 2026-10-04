@@ -9,31 +9,36 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.ui.theme.MusicType
+import com.codetiger.mymusicapp.ui.theme.Size
 import com.codetiger.mymusicapp.ui.theme.Space
 
-/** Title bar on the three tab screens: drawing, personalised title, Settings. */
+/**
+ * The top of a tab screen's page (Home, Add Song). Tab screens have no fixed bar: the header
+ * scrolls with the page and the selected tab says where you are. [leading] is the drawing on Home.
+ */
 @Composable
-fun TabTitleBar(
+fun PageHeader(
     title: String,
-    drawing: ImageBitmap?,
-    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    leading: (@Composable () -> Unit)? = null,
 ) {
-    TitleBarRow(modifier) {
-        Avatar(drawing)
-        TitleText(title, Modifier.weight(1f))
-        StackedButton(stringResource(R.string.action_settings), R.drawable.ic_settings, onSettings)
+    Row(
+        modifier = modifier.fillMaxWidth().heightIn(min = Size.RowTall).padding(top = Space.S4),
+        horizontalArrangement = Arrangement.spacedBy(Space.S4),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        leading?.invoke()
+        // Wraps, never ellipsised.
+        Text(title, style = MusicType.SongHero, modifier = Modifier.weight(1f).semantics { heading() })
     }
 }
 
-/** Title bar on every other screen: Back, then the screen title. */
+/** The fixed bar on every screen that is not a tab: Back, then the screen title. */
 @Composable
 fun BackTitleBar(
     title: String,
@@ -51,7 +56,7 @@ private fun TitleBarRow(modifier: Modifier, content: @Composable androidx.compos
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 88.dp)
+            .heightIn(min = Size.RowTall)
             .padding(horizontal = Space.S4, vertical = Space.S3),
         horizontalArrangement = Arrangement.spacedBy(Space.S3),
         verticalAlignment = Alignment.CenterVertically,

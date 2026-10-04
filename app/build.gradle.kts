@@ -73,6 +73,11 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+// TokensTest checks the Kotlin theme against the design system's tokens; rerun it when they change.
+tasks.withType<Test>().configureEach {
+    inputs.file(rootProject.file("design-system/tokens.json"))
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

@@ -33,6 +33,7 @@ import com.codetiger.mymusicapp.ui.components.ButtonKind
 import com.codetiger.mymusicapp.ui.components.ButtonPair
 import com.codetiger.mymusicapp.ui.components.ConfirmDialog
 import com.codetiger.mymusicapp.ui.components.ListTile
+import com.codetiger.mymusicapp.ui.components.MessageAction
 import com.codetiger.mymusicapp.ui.components.MoveButtons
 import com.codetiger.mymusicapp.ui.components.MusicButton
 import com.codetiger.mymusicapp.ui.components.NameDialog
@@ -124,7 +125,7 @@ fun PlaylistScreen(ref: ListRef) {
     }
 
     if (askRename && playlist != null) {
-        NameDialog("Rename List", "Name of the list", playlist!!.name, "Rename", onConfirm = { newName ->
+        NameDialog("Rename List", "Name of the list", playlist!!.name, "Rename", R.drawable.ic_edit, onConfirm = { newName ->
             app.scope.launch { app.library.renameList(playlist!!.id, newName) }
         }, onDismiss = { askRename = false })
     }
@@ -139,9 +140,9 @@ fun PlaylistScreen(ref: ListRef) {
                     // A deleted default list goes back to Favourites (PL-7).
                     if (app.settings.current().defaultList == ListRef.Stored(id)) app.settings.setDefaultList(null)
                 }
-                ui.messages.show("List deleted", R.drawable.ic_delete, "Put Back") {
+                ui.messages.show("List deleted", R.drawable.ic_delete, MessageAction("Put Back", R.drawable.ic_restore_from_trash) {
                     app.scope.launch { app.library.putBackList(id) }
-                }
+                })
             },
             onDismiss = { askDelete = false },
             detail = "It goes to Recently Removed for 30 days, where you can put it back.",
@@ -191,7 +192,7 @@ fun AddToListScreen(songId: Long) {
     }
 
     if (askNew) {
-        NameDialog("New List", "Name of the list", "", "Make List", onConfirm = { name ->
+        NameDialog("New List", "Name of the list", "", "Make List", R.drawable.ic_add, onConfirm = { name ->
             app.scope.launch {
                 val id = app.library.createList(name)
                 app.library.addToList(id, songId)

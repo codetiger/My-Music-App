@@ -26,12 +26,20 @@ object Size {
     val Play = 96.dp
     val Transport = 72.dp
     val Avatar = 48.dp
+    val AvatarLg = 64.dp
     val ArtRow = 64.dp
+    val ArtCard = 96.dp
     val ArtHero = 240.dp
+    val IconSm = 24.dp
     val Icon = 28.dp
+    val IconMd = 32.dp
     val IconLg = 40.dp
+    val IconXl = 56.dp
+    val Row = 72.dp
+    val RowTall = 88.dp
     val Handle = 32.dp
     val Track = 8.dp
+    val Progress = 4.dp
     val Tile = 128.dp
     val FocusWidth = 3.dp
 }

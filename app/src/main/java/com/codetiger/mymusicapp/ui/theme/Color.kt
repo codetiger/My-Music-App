@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 /** The four colours from design-system/tokens.json. Never add a fifth. */
 object MusicColors {
     val Surface = Color(0xFFF7F0E4)
-    val Fill = Color(0xFFE9DCC6)
+    val Fill = Color(0xFFDCC8A8)
     val Ink = Color(0xFF2B1D14)
     val Accent = Color(0xFF6B4423)
 

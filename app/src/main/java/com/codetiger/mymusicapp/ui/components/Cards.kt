@@ -55,7 +55,7 @@ fun NoticeCard(
 ) {
     FlatCard(modifier) {
         Row(horizontalArrangement = Arrangement.spacedBy(Space.S3)) {
-            Icon(painterResource(icon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(32.dp))
+            Icon(painterResource(icon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.IconMd))
             Column(Modifier.weight(1f).semantics(mergeDescendants = true) {}) {
                 Text(headline, style = MusicType.Heading)
                 if (detail != null) Text(detail, style = MusicType.Body)
@@ -80,6 +80,7 @@ fun ListTile(
     Column(
         modifier
             .heightIn(min = Size.Tile)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(MusicColors.Fill)
             .clickable(role = Role.Button, onClick = onClick)
@@ -106,13 +107,14 @@ fun NewListTile(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .heightIn(min = Size.Tile)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .clickable(role = Role.Button, onClick = onClick)
             .semantics(mergeDescendants = true) {}
             .padding(Space.S4),
         verticalArrangement = Arrangement.spacedBy(Space.S3),
     ) {
-        Box(Modifier.size(56.dp).clip(CircleShape).background(MusicColors.Fill), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(Size.IconXl).clip(CircleShape).background(MusicColors.Fill), contentAlignment = Alignment.Center) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.IconLg))
         }
         Text("New List", style = MusicType.Button)
@@ -125,7 +127,8 @@ fun ChoiceRow(text: String, selected: Boolean, onClick: () -> Unit, modifier: Mo
     Row(
         modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = 72.dp)
+            .defaultMinSize(minHeight = Size.Row)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(if (selected) MusicColors.Accent else MusicColors.Fill)
             .clickable(role = Role.RadioButton, onClick = onClick)
@@ -154,7 +157,8 @@ fun SettingsRow(
     Row(
         modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = 88.dp)
+            .defaultMinSize(minHeight = Size.RowTall)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(MusicColors.Fill)
             .clickable(role = Role.Button, onClick = onClick)
@@ -167,7 +171,7 @@ fun SettingsRow(
         Column(Modifier.weight(1f)) {
             Text(name, style = MusicType.BodyStrong)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S1)) {
-                if (valueIcon != null) Icon(painterResource(valueIcon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(24.dp))
+                if (valueIcon != null) Icon(painterResource(valueIcon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.IconSm))
                 Text(value, style = MusicType.Body)
             }
         }

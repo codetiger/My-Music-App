@@ -38,12 +38,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/** The one button a Message may carry: a word and its icon, like every button. */
+class MessageAction(val label: String, val icon: Int, val run: () -> Unit)
+
 /** One plain sentence at the bottom, with an optional action (Message). */
 data class UiMessage(
     val text: String,
     val icon: Int = R.drawable.ic_info,
-    val actionLabel: String? = null,
-    val action: (() -> Unit)? = null,
+    val action: MessageAction? = null,
     val id: Long = System.nanoTime(),
     val shownAt: Long = System.currentTimeMillis(),
 )
@@ -57,8 +59,8 @@ class MessageCenter {
         _current.value = message
     }
 
-    fun show(text: String, icon: Int = R.drawable.ic_info, actionLabel: String? = null, action: (() -> Unit)? = null) =
-        show(UiMessage(text, icon, actionLabel, action))
+    fun show(text: String, icon: Int = R.drawable.ic_info, action: MessageAction? = null) =
+        show(UiMessage(text, icon, action))
 
     /** The screen changed: a message with an action goes, unless it was posted just now for the new screen. */
     fun onScreenChanged() {
@@ -92,7 +94,8 @@ fun MessageBar(center: MessageCenter, modifier: Modifier = Modifier) {
         FlowRow(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Space.S3)
+                .padding(horizontal = Space.S4)
+                .focusRing(Radius.Md)
                 .clip(Radius.Md)
                 .background(MusicColors.Fill)
                 .clickable { center.dismiss(m.id) }
@@ -106,8 +109,8 @@ fun MessageBar(center: MessageCenter, modifier: Modifier = Modifier) {
                 Icon(painterResource(m.icon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.Icon))
                 Text(m.text, style = MusicType.Body)
             }
-            if (m.actionLabel != null && m.action != null) {
-                MusicButton(m.actionLabel, null, { center.dismiss(m.id); m.action.invoke() }, onFill = true)
+            m.action?.let { a ->
+                MusicButton(a.label, a.icon, { center.dismiss(m.id); a.run() }, onFill = true)
             }
         }
     }

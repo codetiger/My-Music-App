@@ -35,6 +35,7 @@ import com.codetiger.mymusicapp.ui.components.ButtonKind
 import com.codetiger.mymusicapp.ui.components.ButtonPair
 import com.codetiger.mymusicapp.ui.components.ConfirmDialog
 import com.codetiger.mymusicapp.ui.components.EditSongDialog
+import com.codetiger.mymusicapp.ui.components.MessageAction
 import com.codetiger.mymusicapp.ui.components.MusicButton
 import com.codetiger.mymusicapp.ui.components.SongArt
 import com.codetiger.mymusicapp.ui.components.StatusLabel
@@ -122,9 +123,9 @@ fun SongScreen(songId: Long, from: ListRef?) {
                 if (list != null && fromName != null) {
                     WideButton("Take Out of $fromName", R.drawable.ic_playlist_remove, {
                         app.scope.launch { app.library.removeFromList(list.id, s.id) }
-                        ui.messages.show("Taken out of $fromName", R.drawable.ic_playlist_remove, "Put Back") {
+                        ui.messages.show("Taken out of $fromName", R.drawable.ic_playlist_remove, MessageAction("Put Back", R.drawable.ic_restore_from_trash) {
                             app.scope.launch { app.library.addToList(list.id, s.id) }
-                        }
+                        })
                         nav.popBackStack()
                     })
                 }
@@ -152,10 +153,10 @@ fun removeSong(app: AppContainer, ui: UiState, song: Song) {
     app.player.removeSong(song.id)
     app.scheduler.cancel(song.id)
     app.scope.launch { app.library.removeSong(song.id) }
-    ui.messages.show("Song removed", R.drawable.ic_delete, "Put Back") {
+    ui.messages.show("Song removed", R.drawable.ic_delete, MessageAction("Put Back", R.drawable.ic_restore_from_trash) {
         app.scope.launch {
             app.library.putBackSong(song.id)
             if (song.downloadStatus != DownloadStatus.DONE && song.downloadStatus != DownloadStatus.FAILED) app.scheduler.enqueue(song.id)
         }
-    }
+    })
 }

@@ -10,5 +10,5 @@ Where a song stands, in words with an icon. All four use `ink`; the icon and the
 | failed | Can't be saved | `error` (filled), words in bold |
 
 ## Rules
-- `body` size, icon 24dp, `space-1` apart. No coloured status text.
+- `body` size, icon `size-icon-sm`, `space-1` apart. No coloured status text.
 - "Can't be saved" on the Song screen comes with **Try Again** and **Remove**, or **Remove** alone when it can never work.

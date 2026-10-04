@@ -72,7 +72,7 @@ fun WelcomeNameScreen() {
     WelcomePage("Welcome", "This app keeps your songs on your phone and plays them with one tap.") {
         NameField(name, { name = it }, "What is your name?", onDone = next)
         WideButton("Continue", R.drawable.ic_chevron_right, next, kind = ButtonKind.Primary)
-        WideButton("Skip", null, {
+        WideButton("Skip", R.drawable.ic_skip_next, {
             app.scope.launch { app.settings.setUserName(null) }
             nav.navigate(Routes.WELCOME_PHOTO)
         })
@@ -91,7 +91,7 @@ fun WelcomePhotoScreen() {
     ) {
         WideButton("Take Photo", R.drawable.ic_photo_camera, pickers.takePhoto, kind = ButtonKind.Primary)
         WideButton("Choose Photo", R.drawable.ic_image, pickers.choosePhoto)
-        WideButton("Skip", null, { nav.navigate(Routes.setup(Routes.FROM_WELCOME)) })
+        WideButton("Skip", R.drawable.ic_skip_next, { nav.navigate(Routes.setup(Routes.FROM_WELCOME)) })
     }
 }
 

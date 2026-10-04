@@ -20,14 +20,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.data.AppSettings
 import com.codetiger.mymusicapp.data.db.Song
+import com.codetiger.mymusicapp.data.defaultListOf
 import com.codetiger.mymusicapp.ui.components.BackTitleBar
 import com.codetiger.mymusicapp.ui.components.MessageBar
 import com.codetiger.mymusicapp.ui.components.NowPlayingBar
+import com.codetiger.mymusicapp.ui.components.PlayListBar
 import com.codetiger.mymusicapp.ui.components.Tab
 import com.codetiger.mymusicapp.ui.components.TabBar
-import com.codetiger.mymusicapp.ui.components.TabTitleBar
 import com.codetiger.mymusicapp.ui.theme.Space
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 @Composable
 fun rememberSettings(): AppSettings {
@@ -52,15 +54,17 @@ fun rememberDrawing(version: Long): ImageBitmap? {
     return bitmap
 }
 
-/** Home and Add Song: title bar with Settings, the content, Message, Now Playing bar, tabs. */
+/**
+ * Home and Add Song: the page (which starts with its own PageHeader), Message, Now Playing bar,
+ * tabs. No fixed top bar: it would only repeat what the selected tab already says. [primaryPlay]
+ * makes the bar's Play / Pause the accent, for a screen with no main action of its own (Home).
+ */
 @Composable
-fun TabScreen(tab: Tab, content: @Composable ColumnScope.() -> Unit) {
+fun TabScreen(tab: Tab, primaryPlay: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
     val nav = LocalNav.current
-    val settings = rememberSettings()
     Column(Modifier.fillMaxSize()) {
-        TabTitleBar(appTitle(settings), rememberDrawing(settings.drawingVersion), onSettings = { nav.navigate(Routes.SETTINGS) })
         Column(Modifier.weight(1f).fillMaxWidth()) { content() }
-        BottomArea(showNowPlaying = true)
+        BottomArea(showNowPlaying = true, primaryPlay = primaryPlay)
         TabBar(selected = tab, onSelect = { selected ->
             // Home is the root; Add Song sits on top of it. (Saved tab state would bring Add Song
             // back when Home is chosen, since Home is also the start screen.)
@@ -95,26 +99,45 @@ fun BackScreen(
 }
 
 @Composable
-private fun BottomArea(showNowPlaying: Boolean) {
+private fun BottomArea(showNowPlaying: Boolean, primaryPlay: Boolean = false) {
+    val ui = LocalUi.current
+    Column(Modifier.fillMaxWidth().padding(bottom = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S3)) {
+        MessageBar(ui.messages)
+        if (showNowPlaying) NowPlayingArea(primaryPlay)
+    }
+}
+
+/** The current song, or once the player is ready and holds nothing, the default list to play. */
+@Composable
+private fun NowPlayingArea(primaryPlay: Boolean) {
     val app = LocalApp.current
     val ui = LocalUi.current
     val nav = LocalNav.current
-    Column(Modifier.fillMaxWidth().padding(bottom = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S3)) {
-        MessageBar(ui.messages)
-        if (showNowPlaying) {
-            val state by app.player.state.collectAsStateWithLifecycle()
-            val songFlow = remember(state.currentSongId) { state.currentSongId?.let { app.library.song(it) } ?: flowOf<Song?>(null) }
-            val song by songFlow.collectAsStateWithLifecycle(initialValue = null)
-            song?.let {
-                NowPlayingBar(
-                    song = it,
-                    isPlaying = state.isPlaying,
-                    progress = if (state.durationMs > 0) state.positionMs.toFloat() / state.durationMs else 0f,
-                    onOpen = { nav.navigate(Routes.PLAYER) { launchSingleTop = true } },
-                    onPlayPause = { app.player.togglePlay() },
-                )
-            }
+    val state by app.player.state.collectAsStateWithLifecycle()
+    if (state.hasSong) {
+        val songFlow = remember(state.currentSongId) { state.currentSongId?.let { app.library.song(it) } ?: flowOf<Song?>(null) }
+        val song by songFlow.collectAsStateWithLifecycle(initialValue = null)
+        song?.let {
+            NowPlayingBar(
+                song = it,
+                isPlaying = state.isPlaying,
+                progress = if (state.durationMs > 0) state.positionMs.toFloat() / state.durationMs else 0f,
+                onOpen = { nav.navigate(Routes.PLAYER) { launchSingleTop = true } },
+                onPlayPause = { app.player.togglePlay() },
+                primary = primaryPlay,
+            )
         }
+    } else if (state.connected) {
+        val settings = rememberSettings()
+        val lists by app.library.playlistSummaries.collectAsStateWithLifecycle(initialValue = null)
+        val default = lists?.let { defaultListOf(settings.defaultList, it) } ?: return
+        PlayListBar(default.name, default.picture, primary = primaryPlay, onPlay = {
+            app.scope.launch {
+                val songs = app.library.currentSongsOf(default.ref, settings.songSort)
+                if (songs.isEmpty()) ui.messages.show("Tap Add Song to save your first song", R.drawable.ic_add_circle)
+                else app.player.play(songs)
+            }
+        })
     }
 }
 

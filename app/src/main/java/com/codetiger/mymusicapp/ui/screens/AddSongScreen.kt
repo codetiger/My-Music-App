@@ -4,17 +4,14 @@ import android.content.ClipboardManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,10 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codetiger.mymusicapp.R
@@ -42,7 +36,7 @@ import com.codetiger.mymusicapp.ui.components.ConfirmDialog
 import com.codetiger.mymusicapp.ui.components.FlatCard
 import com.codetiger.mymusicapp.ui.components.HeroButton
 import com.codetiger.mymusicapp.ui.components.NoticeCard
-import com.codetiger.mymusicapp.ui.components.ScreenTitle
+import com.codetiger.mymusicapp.ui.components.PageHeader
 import com.codetiger.mymusicapp.ui.components.SongArt
 import com.codetiger.mymusicapp.ui.components.Tab
 import com.codetiger.mymusicapp.ui.components.TickBox
@@ -80,14 +74,15 @@ fun AddSongScreen() {
             Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Space.S4, vertical = Space.S2),
             verticalArrangement = Arrangement.spacedBy(Space.S4),
         ) {
-            ScreenTitle("Add a Song")
+            PageHeader("Add a Song")
+            // Once there is something to save, Save Song is the one accent and Paste Link steps back.
             HeroButton("Paste Link", R.drawable.ic_content_paste, {
                 val clip = context.getSystemService(ClipboardManager::class.java).primaryClip
                 vm.paste(clip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.coerceToText(context)?.toString())
-            }, subText = "Uses the link you copied")
-            BigButton("Pick a File", "Song from phone or WhatsApp", R.drawable.ic_audio_file) {
+            }, subText = "Uses the link you copied", kind = if (state.items.isEmpty()) ButtonKind.Primary else ButtonKind.Secondary)
+            HeroButton("Pick a File", R.drawable.ic_audio_file, {
                 pickFiles.launch(arrayOf("audio/*", "video/mp4", "application/ogg"))
-            }
+            }, subText = "Song from phone or WhatsApp", kind = ButtonKind.Secondary)
             if (lowSpace) {
                 NoticeCard(R.drawable.ic_sd_card_alert, "Your phone is nearly full", detail = "Remove songs you don't need to make room for new ones.")
             }
@@ -113,30 +108,7 @@ fun AddSongScreen() {
     }
 
     state.askLong?.let { question ->
-        ConfirmDialog(question, "Save", onConfirm = { vm.save(confirmedLong = true) }, onDismiss = vm::cancelLong)
-    }
-}
-
-/** A big flat button with a second line under its label (Pick a File). */
-@Composable
-private fun BigButton(title: String, sub: String, icon: Int, onClick: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = Size.Play)
-            .clip(Radius.Lg)
-            .background(MusicColors.Fill)
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics(mergeDescendants = true) {}
-            .padding(horizontal = Space.S5, vertical = Space.S3),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Space.S4),
-    ) {
-        Icon(painterResource(icon), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.IconLg))
-        Column {
-            Text(title, style = MusicType.ButtonHero)
-            Text(sub, style = MusicType.Body)
-        }
+        ConfirmDialog(question, "Save", onConfirm = { vm.save(confirmedLong = true) }, onDismiss = vm::cancelLong, confirmIcon = R.drawable.ic_download)
     }
 }
 
@@ -173,10 +145,10 @@ private fun PreviewCard(item: AddItem, many: Boolean, vm: AddSongViewModel) {
                     model = picture,
                     contentDescription = null,
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                    modifier = Modifier.size(96.dp).clip(Radius.Sm).background(MusicColors.Surface),
+                    modifier = Modifier.size(Size.ArtCard).clip(Radius.Sm).background(MusicColors.Surface),
                 )
             } else {
-                SongArt(null, size = 96.dp, onFill = true, noteSize = 40.dp)
+                SongArt(null, size = Size.ArtCard, onFill = true, noteSize = Size.IconLg)
             }
             Column(Modifier.weight(1f).semantics(mergeDescendants = true) {}) {
                 Text(title, style = MusicType.BodyStrong)

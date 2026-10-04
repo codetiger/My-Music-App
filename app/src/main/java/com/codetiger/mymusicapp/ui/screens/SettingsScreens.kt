@@ -140,7 +140,7 @@ fun YourNameAndPhotoScreen() {
     }
 
     if (askName) {
-        NameDialog("Change Name", "Your name", settings.userName.orEmpty(), "Save", onConfirm = { name ->
+        NameDialog("Change Name", "Your name", settings.userName.orEmpty(), "Save", R.drawable.ic_check, onConfirm = { name ->
             app.scope.launch {
                 app.settings.setUserName(name)
                 // The home-screen picture's label follows the name (FL-10).
@@ -179,14 +179,14 @@ fun TextSizeScreen() {
     }
 }
 
-/** Default Playlist: what the big Play button on Home plays (PL-7). */
+/** Default Playlist: what the Now Playing bar on Home plays when nothing is loaded (PL-7). */
 @Composable
 fun DefaultListScreen() {
     val app = LocalApp.current
     val settings = rememberSettings()
     val lists by app.library.playlistSummaries.collectAsStateWithLifecycle(initialValue = emptyList())
     SettingsPage("Default Playlist") {
-        Text("The big Play button on Home plays this list.", style = MusicType.Body)
+        Text("When nothing is playing, the Play button at the bottom of Home plays this list.", style = MusicType.Body)
         lists.forEach { list ->
             val selected = if (list.builtIn == BuiltIn.FAVOURITES) settings.defaultList == null || settings.defaultList == ListRef.Stored(list.id)
             else settings.defaultList == ListRef.Stored(list.id)
@@ -233,7 +233,7 @@ fun RecentlyRemovedScreen() {
     SettingsPage("Recently Removed") {
         Text("Removed songs and lists stay here for 30 days. Then they are deleted.", style = MusicType.Body)
         if (removedSongs.isEmpty() && removedLists.isEmpty()) {
-            Text("Nothing here.", style = MusicType.BodyStrong)
+            Text("Nothing here.", style = MusicType.Body)
             return@SettingsPage
         }
         removedSongs.forEach { song ->

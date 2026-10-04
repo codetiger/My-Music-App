@@ -109,7 +109,7 @@ fun SetupScreen(from: String) {
 
     BackScreen("Phone Setup", onBack = { if (index > 0) index-- else nav.popBackStack() ; Unit }) {
         Column(
-            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Space.S4),
+            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Space.S4, vertical = Space.S2),
             verticalArrangement = Arrangement.spacedBy(Space.S4),
         ) {
             Text("Step ${index + 1} of ${steps.size}", style = MusicType.BodyStrong)
@@ -118,7 +118,7 @@ fun SetupScreen(from: String) {
             if (step == SetupStep.AndroidAuto) AndroidAutoSteps() else ControlPicture(step, text)
             if (done) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S2)) {
-                    Icon(painterResource(R.drawable.ic_check_circle), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(32.dp))
+                    Icon(painterResource(R.drawable.ic_check_circle), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.IconMd))
                     Text("Done", style = MusicType.BodyStrong)
                 }
                 WideButton("Next", R.drawable.ic_chevron_right, next, kind = ButtonKind.Primary)
@@ -126,7 +126,7 @@ fun SetupScreen(from: String) {
                 WideButton("I Have Done This", R.drawable.ic_check, {
                     app.scope.launch { app.settings.setAndroidAutoDone() }
                 }, kind = ButtonKind.Primary)
-                WideButton("Skip", null, next)
+                WideButton("Skip", R.drawable.ic_skip_next, next)
             } else {
                 WideButton("Open Settings", R.drawable.ic_open_in_new, {
                     val intent = app.phoneSetup.intent(step)
@@ -140,7 +140,7 @@ fun SetupScreen(from: String) {
                         ui.messages.show("This phone doesn't allow opening that page. You can skip this step.")
                     }
                 }, kind = ButtonKind.Primary)
-                WideButton("Skip", null, next)
+                WideButton("Skip", R.drawable.ic_skip_next, next)
             }
         }
     }

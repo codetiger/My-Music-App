@@ -24,12 +24,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.ui.Routes
 import com.codetiger.mymusicapp.ui.theme.MusicColors
 import com.codetiger.mymusicapp.ui.theme.MusicType
 import com.codetiger.mymusicapp.ui.theme.Radius
+import com.codetiger.mymusicapp.ui.theme.Size
 import com.codetiger.mymusicapp.ui.theme.Space
 
 enum class Tab(
@@ -52,7 +52,7 @@ fun TabBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Space.S3, vertical = Space.S2)
+            .padding(horizontal = Space.S4, vertical = Space.S2)
             .selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(Space.S2),
     ) {
@@ -61,7 +61,8 @@ fun TabBar(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(min = 72.dp)
+                    .heightIn(min = Size.Row)
+                    .focusRing(Radius.Md)
                     .clip(Radius.Md)
                     .background(if (isSelected) MusicColors.Fill else Color.Transparent)
                     .selectable(selected = isSelected, role = Role.Tab, onClick = { onSelect(tab) })
@@ -73,7 +74,7 @@ fun TabBar(
                     painterResource(if (isSelected) tab.selectedIcon else tab.icon),
                     contentDescription = null,
                     tint = MusicColors.Ink,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(Size.IconMd),
                 )
                 Text(
                     stringResource(tab.label),

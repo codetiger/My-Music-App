@@ -23,7 +23,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.data.db.DownloadStatus
@@ -43,7 +42,7 @@ fun SongArt(
     size: Dp = Size.ArtRow,
     shape: Shape = Radius.Sm,
     onFill: Boolean = false,
-    noteSize: Dp = 32.dp,
+    noteSize: Dp = Size.IconMd,
 ) {
     val box = modifier.size(size).clip(shape).background(if (onFill) MusicColors.Surface else MusicColors.Fill)
     Box(box, contentAlignment = Alignment.Center) {
@@ -72,7 +71,7 @@ fun Song.status(): SongStatus = when (downloadStatus) {
 @Composable
 fun StatusLabel(status: SongStatus, modifier: Modifier = Modifier, color: Color = MusicColors.Ink) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S1)) {
-        Icon(painterResource(status.icon), contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
+        Icon(painterResource(status.icon), contentDescription = null, tint = color, modifier = Modifier.size(Size.IconSm))
         Text(
             status.words,
             style = if (status.bold) MusicType.BodyStrong else MusicType.Body,
@@ -103,6 +102,7 @@ fun SongRow(
         Row(
             Modifier
                 .weight(1f)
+                .focusRing(Radius.Sm)
                 .clip(Radius.Sm)
                 .clickable(role = Role.Button, onClickLabel = "Open song", onClick = onOpen)
                 .semantics(mergeDescendants = true) {},
@@ -131,8 +131,8 @@ fun SongRow(
 fun MoveButtons(onUp: () -> Unit, onDown: () -> Unit, canUp: Boolean, canDown: Boolean, title: String) {
     Row(horizontalArrangement = Arrangement.spacedBy(Space.S2)) {
         // Buttons stay active; at the ends they simply do nothing (design-system: never disable).
-        StackedButton("Up", R.drawable.ic_arrow_upward, { if (canUp) onUp() }, description = "Move $title up")
-        StackedButton("Down", R.drawable.ic_arrow_downward, { if (canDown) onDown() }, description = "Move $title down")
+        StackedButton("Move Up", R.drawable.ic_arrow_upward, { if (canUp) onUp() }, description = "Move $title up")
+        StackedButton("Move Down", R.drawable.ic_arrow_downward, { if (canDown) onDown() }, description = "Move $title down")
     }
 }
 
@@ -141,7 +141,7 @@ fun SectionHeading(text: String, modifier: Modifier = Modifier) {
     Text(
         text,
         style = MusicType.Heading,
-        modifier = modifier.padding(top = Space.S5).semantics { heading() },
+        modifier = modifier.padding(top = Space.S6).semantics { heading() },
     )
 }
 

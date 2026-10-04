@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.ui.theme.MusicColors
 import com.codetiger.mymusicapp.ui.theme.MusicType
 import com.codetiger.mymusicapp.ui.theme.Radius
@@ -45,11 +46,11 @@ private fun colorsFor(kind: ButtonKind, onFill: Boolean): Pair<Color, Color> = w
     ButtonKind.Secondary -> (if (onFill) MusicColors.Surface else MusicColors.Fill) to MusicColors.Ink
 }
 
-/** A flat shape with an icon and a word. Set [onFill] when it sits on a `fill` area. */
+/** A flat shape with an icon and a word (every button has both). Set [onFill] when it sits on a `fill` area. */
 @Composable
 fun MusicButton(
     text: String,
-    @DrawableRes icon: Int?,
+    @DrawableRes icon: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     kind: ButtonKind = ButtonKind.Secondary,
@@ -59,6 +60,7 @@ fun MusicButton(
     Row(
         modifier = modifier
             .defaultMinSize(minWidth = Size.Target, minHeight = Size.Target)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(container)
             .clickable(role = Role.Button, onClick = onClick)
@@ -66,10 +68,8 @@ fun MusicButton(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) {
-            Icon(painterResource(icon), contentDescription = null, tint = content, modifier = Modifier.size(Size.Icon))
-            Spacer(Modifier.width(Space.S3))
-        }
+        Icon(painterResource(icon), contentDescription = null, tint = content, modifier = Modifier.size(Size.Icon))
+        Spacer(Modifier.width(Space.S3))
         Text(text, style = MusicType.Button, color = content, textAlign = TextAlign.Center)
     }
 }
@@ -78,7 +78,7 @@ fun MusicButton(
 @Composable
 fun WideButton(
     text: String,
-    @DrawableRes icon: Int?,
+    @DrawableRes icon: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     kind: ButtonKind = ButtonKind.Secondary,
@@ -99,6 +99,7 @@ fun ToggleButton(
     Row(
         modifier = modifier
             .defaultMinSize(minWidth = Size.Target, minHeight = Size.Target)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(container)
             .clickable(role = Role.Button, onClick = onClick)
@@ -112,20 +113,25 @@ fun ToggleButton(
     }
 }
 
-/** Icon above a short word, for tight spots: title bar Settings, row Play, bar Pause. */
+/**
+ * Icon above a short word, for tight spots: title bar Settings, row Play, bar Pause. Primary only
+ * for the Now Playing bar's Play / Pause on the tab screens, where it is the screen's main action.
+ */
 @Composable
 fun StackedButton(
     text: String,
     @DrawableRes icon: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    kind: ButtonKind = ButtonKind.Secondary,
     onFill: Boolean = false,
     description: String? = null,
 ) {
-    val (container, content) = colorsFor(ButtonKind.Secondary, onFill)
+    val (container, content) = colorsFor(kind, onFill)
     Column(
         modifier = modifier
             .defaultMinSize(minWidth = Size.Target, minHeight = Size.Target)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(container)
             .clickable(role = Role.Button, onClick = onClick)
@@ -140,7 +146,11 @@ fun StackedButton(
     }
 }
 
-/** The one 96dp main button on Home and Add Song: accent, a disc with the icon, big label. */
+/**
+ * The 96dp buttons on Add Song: a disc with the icon, a big label and a line under it. Primary is
+ * `accent` (Paste Link before anything is pasted); Secondary is `fill` (Pick a File, and Paste Link
+ * while there is a song to save, so Save Song is the only accent).
+ */
 @Composable
 fun HeroButton(
     text: String,
@@ -148,29 +158,30 @@ fun HeroButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subText: String? = null,
-    subFirst: Boolean = false,
+    kind: ButtonKind = ButtonKind.Primary,
 ) {
+    val (container, content) = colorsFor(kind, onFill = false)
     Row(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = Size.Play)
+            .focusRing(Radius.Lg)
             .clip(Radius.Lg)
-            .background(MusicColors.Accent)
+            .background(container)
             .clickable(role = Role.Button, onClick = onClick)
+            .semantics(mergeDescendants = true) {}
             .padding(start = Space.S3, end = Space.S5, top = Space.S3, bottom = Space.S3),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.S4),
     ) {
-        Box(
-            Modifier.size(Size.Transport).clip(CircleShape).background(MusicColors.OnAccent),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(painterResource(icon), contentDescription = null, tint = MusicColors.Accent, modifier = Modifier.size(Size.IconLg))
+        // A `surface` disc on either fill; the icon is `accent` on the primary, `ink` otherwise.
+        Box(Modifier.size(Size.Transport).clip(CircleShape).background(MusicColors.Surface), contentAlignment = Alignment.Center) {
+            val tint = if (kind == ButtonKind.Primary) MusicColors.Accent else MusicColors.Ink
+            Icon(painterResource(icon), contentDescription = null, tint = tint, modifier = Modifier.size(Size.IconLg))
         }
         Column(Modifier.weight(1f)) {
-            if (subText != null && subFirst) Text(subText, style = MusicType.Body, color = MusicColors.OnAccent)
-            Text(text, style = MusicType.ButtonHero, color = MusicColors.OnAccent)
-            if (subText != null && !subFirst) Text(subText, style = MusicType.Body, color = MusicColors.OnAccent)
+            Text(text, style = MusicType.ButtonHero, color = content)
+            if (subText != null) Text(subText, style = MusicType.Body, color = content)
         }
     }
 }
@@ -195,6 +206,7 @@ fun TickBox(checked: Boolean, onChange: (Boolean) -> Unit, label: String, modifi
     Box(
         modifier
             .size(Size.Target)
+            .focusRing(Radius.Sm)
             .clickable(role = Role.Checkbox) { onChange(!checked) }
             .semantics {
                 contentDescription = label
@@ -208,7 +220,7 @@ fun TickBox(checked: Boolean, onChange: (Boolean) -> Unit, label: String, modifi
         ) {
             if (checked) {
                 Icon(
-                    painterResource(com.codetiger.mymusicapp.R.drawable.ic_check),
+                    painterResource(R.drawable.ic_check),
                     contentDescription = null,
                     tint = MusicColors.OnAccent,
                     modifier = Modifier.size(Size.Icon),

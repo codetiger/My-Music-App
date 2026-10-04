@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.ui.theme.MusicColors
 import com.codetiger.mymusicapp.ui.theme.MusicType
 import com.codetiger.mymusicapp.ui.theme.Radius
@@ -54,15 +55,15 @@ fun ConfirmDialog(
     confirmLabel: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    confirmIcon: Int,
     detail: String? = null,
-    confirmIcon: Int? = null,
 ) {
     DialogPanel(onDismiss) {
         Text(question, style = MusicType.Heading, modifier = Modifier.semantics { heading() })
         if (detail != null) Text(detail, style = MusicType.Body)
         Column(Modifier.padding(top = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
             WideButton(confirmLabel, confirmIcon, { onDismiss(); onConfirm() }, kind = ButtonKind.Primary)
-            WideButton("Cancel", null, onDismiss)
+            WideButton("Cancel", R.drawable.ic_close, onDismiss)
         }
     }
 }
@@ -74,17 +75,23 @@ fun NameDialog(
     label: String,
     initial: String,
     confirmLabel: String,
+    confirmIcon: Int,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf(initial) }
-    val confirm = { if (text.isNotBlank()) { onDismiss(); onConfirm(text.trim()) } }
+    var askedBlank by rememberSaveable { mutableStateOf(false) }
+    // Never a silent button: an empty name is answered under the box (design-system TextField).
+    val confirm = { if (text.isBlank()) askedBlank = true else { onDismiss(); onConfirm(text.trim()) } }
     DialogPanel(onDismiss) {
         Text(title, style = MusicType.Heading, modifier = Modifier.semantics { heading() })
-        NameField(text, { text = it }, label, onDone = confirm, autoFocus = true)
+        NameField(
+            text, { text = it; if (it.isNotBlank()) askedBlank = false }, label, onDone = confirm, autoFocus = true,
+            hint = if (askedBlank) "Type a name first." else null,
+        )
         Column(Modifier.padding(top = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
-            WideButton(confirmLabel, null, confirm, kind = ButtonKind.Primary)
-            WideButton("Cancel", null, onDismiss)
+            WideButton(confirmLabel, confirmIcon, confirm, kind = ButtonKind.Primary)
+            WideButton("Cancel", R.drawable.ic_close, onDismiss)
         }
     }
 }
@@ -99,13 +106,19 @@ fun EditSongDialog(
 ) {
     var t by rememberSaveable { mutableStateOf(title) }
     var a by rememberSaveable { mutableStateOf(artist) }
+    var askedBlank by rememberSaveable { mutableStateOf(false) }
+    // The singer may be left empty; the song name may not.
+    val save = { if (t.isBlank()) askedBlank = true else { onDismiss(); onConfirm(t.trim(), a.trim()) } }
     DialogPanel(onDismiss) {
         Text("Edit Name", style = MusicType.Heading, modifier = Modifier.semantics { heading() })
-        NameField(t, { t = it }, "Song name", autoFocus = true)
-        NameField(a, { a = it }, "Singer or artist")
+        NameField(
+            t, { t = it; if (it.isNotBlank()) askedBlank = false }, "Song name", autoFocus = true,
+            hint = if (askedBlank) "Type the song's name first." else null,
+        )
+        NameField(a, { a = it }, "Singer or artist", onDone = save)
         Column(Modifier.padding(top = Space.S2), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
-            WideButton("Save", null, { if (t.isNotBlank()) { onDismiss(); onConfirm(t.trim(), a.trim()) } }, kind = ButtonKind.Primary)
-            WideButton("Cancel", null, onDismiss)
+            WideButton("Save", R.drawable.ic_check, save, kind = ButtonKind.Primary)
+            WideButton("Cancel", R.drawable.ic_close, onDismiss)
         }
     }
 }
@@ -116,6 +129,6 @@ fun ListDialog(title: String, lines: List<String>, onDismiss: () -> Unit) {
     DialogPanel(onDismiss) {
         Text(title, style = MusicType.Heading, modifier = Modifier.semantics { heading() })
         lines.forEach { Text(it, style = MusicType.Body) }
-        WideButton("OK", null, onDismiss, kind = ButtonKind.Primary)
+        WideButton("OK", R.drawable.ic_check, onDismiss, kind = ButtonKind.Primary)
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,26 +31,29 @@ import com.codetiger.mymusicapp.data.db.PlaylistSummary
 import com.codetiger.mymusicapp.data.db.Song
 import com.codetiger.mymusicapp.data.matching
 import com.codetiger.mymusicapp.data.sortedFor
-import com.codetiger.mymusicapp.player.PlayerUiState
 import com.codetiger.mymusicapp.ui.LocalApp
 import com.codetiger.mymusicapp.ui.LocalNav
-import com.codetiger.mymusicapp.ui.LocalUi
 import com.codetiger.mymusicapp.ui.Routes
 import com.codetiger.mymusicapp.ui.TabScreen
+import com.codetiger.mymusicapp.ui.appTitle
+import com.codetiger.mymusicapp.ui.components.Avatar
 import com.codetiger.mymusicapp.ui.components.ChoicePills
-import com.codetiger.mymusicapp.ui.components.HeroButton
 import com.codetiger.mymusicapp.ui.components.ListDialog
 import com.codetiger.mymusicapp.ui.components.ListTile
 import com.codetiger.mymusicapp.ui.components.MusicButton
 import com.codetiger.mymusicapp.ui.components.NameDialog
 import com.codetiger.mymusicapp.ui.components.NewListTile
 import com.codetiger.mymusicapp.ui.components.NoticeCard
+import com.codetiger.mymusicapp.ui.components.PageHeader
 import com.codetiger.mymusicapp.ui.components.SearchField
 import com.codetiger.mymusicapp.ui.components.SectionHeading
 import com.codetiger.mymusicapp.ui.components.SongRow
 import com.codetiger.mymusicapp.ui.components.Tab
+import com.codetiger.mymusicapp.ui.components.WideButton
+import com.codetiger.mymusicapp.ui.rememberDrawing
 import com.codetiger.mymusicapp.ui.rememberSettings
 import com.codetiger.mymusicapp.ui.theme.MusicType
+import com.codetiger.mymusicapp.ui.theme.Size
 import com.codetiger.mymusicapp.ui.theme.Space
 import com.codetiger.mymusicapp.update.AppUpdater
 import kotlinx.coroutines.launch
@@ -62,13 +66,12 @@ private enum class HomeCard { Update, Setup, RestoreSkipped, Empty, Shortcut }
 fun HomeScreen() {
     val app = LocalApp.current
     val nav = LocalNav.current
-    val ui = LocalUi.current
     val settings = rememberSettings()
     val songs by app.library.library.collectAsStateWithLifecycle(initialValue = null)
     val lists by app.library.playlistSummaries.collectAsStateWithLifecycle(initialValue = emptyList())
     val recent by app.library.recentlyPlayed.collectAsStateWithLifecycle(initialValue = emptyList())
-    val player by app.player.state.collectAsStateWithLifecycle()
     val update by app.appUpdater.state.collectAsStateWithLifecycle()
+    val drawing = rememberDrawing(settings.drawingVersion)
     var query by rememberSaveable { mutableStateOf("") }
     var askNewList by remember { mutableStateOf(false) }
     var showSkipped by remember { mutableStateOf(false) }
@@ -82,14 +85,15 @@ fun HomeScreen() {
         pickCard(update, setupOff, settings, songs, app.shortcut.isSupported && !app.shortcut.isPinned)
     }
 
-    TabScreen(Tab.Home) {
+    // Home has no main button of its own: the bar's Play / Pause is it (HOME-2).
+    TabScreen(Tab.Home, primaryPlay = true) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = Space.S4, vertical = Space.S2)) {
-            item(key = "hero") {
-                PlayButton(player, library, lists, settings)
+            // Whose app this is greets you on opening, then scrolls away with the page (HOME-1).
+            item(key = "header") {
+                PageHeader(appTitle(settings), leading = { Avatar(drawing, size = Size.AvatarLg) })
             }
             if (card != null) {
                 item(key = "card") {
-                    Spacer(Modifier.height(Space.S4))
                     HomeNotice(card, settings, onSeeNames = { showSkipped = true })
                 }
             }
@@ -136,12 +140,16 @@ fun HomeScreen() {
                     )
                 }
             }
+            // Settings is set up once, so it waits at the end of Home rather than at the top (SET-1).
+            item(key = "settings") {
+                WideButton(stringResource(R.string.action_settings), R.drawable.ic_settings, { nav.navigate(Routes.SETTINGS) }, Modifier.padding(top = Space.S6))
+            }
             item(key = "end") { Spacer(Modifier.height(Space.S4)) }
         }
     }
 
     if (askNewList) {
-        NameDialog("New List", "Name of the list", "", "Make List", onConfirm = { name ->
+        NameDialog("New List", "Name of the list", "", "Make List", R.drawable.ic_add, onConfirm = { name ->
             app.scope.launch {
                 val id = app.library.createList(name)
                 nav.navigate(Routes.list(ListRef.Stored(id)))
@@ -182,8 +190,8 @@ private fun HomeNotice(card: HomeCard, settings: AppSettings, onSeeNames: () -> 
         HomeCard.RestoreSkipped -> {
             val n = settings.restoreSkippedSongs.size
             NoticeCard(R.drawable.ic_info, if (n == 1) "1 song from WhatsApp or files couldn't be moved to this phone" else "$n songs from WhatsApp or files couldn't be moved to this phone") {
-                MusicButton("See Names", null, onSeeNames, onFill = true)
-                MusicButton("OK", null, { app.scope.launch { app.settings.setRestoreSkippedSongs(emptyList()) } }, onFill = true)
+                MusicButton("See Names", R.drawable.ic_list, onSeeNames, onFill = true)
+                MusicButton("OK", R.drawable.ic_check, { app.scope.launch { app.settings.setRestoreSkippedSongs(emptyList()) } }, onFill = true)
             }
         }
         HomeCard.Empty -> NoticeCard(R.drawable.ic_add_circle, "Tap Add Song to save your first song") {
@@ -193,41 +201,9 @@ private fun HomeNotice(card: HomeCard, settings: AppSettings, onSeeNames: () -> 
             MusicButton("Add", R.drawable.ic_add, {
                 if (app.shortcut.request(settings.userName)) app.scope.launch { app.settings.setHomeShortcutAdded(true) }
             }, onFill = true)
-            MusicButton("No Thanks", null, { app.scope.launch { app.settings.dismissCard("shortcut") } }, onFill = true)
+            MusicButton("No Thanks", R.drawable.ic_close, { app.scope.launch { app.settings.dismissCard("shortcut") } }, onFill = true)
         }
     }
-}
-
-/** HOME-2: "Continue: <song>" when a song was left part-way, otherwise "Play Favourites". */
-@Composable
-private fun PlayButton(player: PlayerUiState, library: List<Song>, lists: List<PlaylistSummary>, settings: AppSettings) {
-    val app = LocalApp.current
-    val ui = LocalUi.current
-    val current = library.firstOrNull { it.id == player.currentSongId }
-    if (player.hasSong && !player.ended && current != null) {
-        if (player.isPlaying) {
-            HeroButton(current.title, R.drawable.ic_pause, { app.player.togglePlay() }, subText = "Playing now — tap to pause", subFirst = true)
-        } else {
-            HeroButton(current.title, R.drawable.ic_play_arrow, { app.player.togglePlay() }, subText = "Continue", subFirst = true)
-        }
-        return
-    }
-    val favourites = lists.firstOrNull { it.builtIn == BuiltIn.FAVOURITES }
-    val chosen = (settings.defaultList as? ListRef.Stored)?.let { ref -> lists.firstOrNull { it.id == ref.playlistId } }
-    // The default list falls back to Favourites, then to All Songs when it's empty (PL-7).
-    val (ref, name) = when {
-        settings.defaultList == ListRef.AllSongs -> ListRef.AllSongs to "All Songs"
-        chosen != null && chosen.songCount > 0 -> ListRef.Stored(chosen.id) to chosen.name
-        chosen == null && favourites != null && favourites.songCount > 0 -> ListRef.Stored(favourites.id) to favourites.name
-        else -> ListRef.AllSongs to "All Songs"
-    }
-    HeroButton("Play $name", R.drawable.ic_play_arrow, {
-        app.scope.launch {
-            val songs = app.library.currentSongsOf(ref, settings.songSort)
-            if (songs.isEmpty()) ui.messages.show("Tap Add Song to save your first song", R.drawable.ic_add_circle)
-            else app.player.play(songs)
-        }
-    })
 }
 
 private data class Tile(val key: String, val ref: ListRef?, val name: String, val count: Int, val icon: Int, val picture: String?)

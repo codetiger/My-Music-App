@@ -46,6 +46,7 @@ import com.codetiger.mymusicapp.ui.components.MusicButton
 import com.codetiger.mymusicapp.ui.components.MusicSlider
 import com.codetiger.mymusicapp.ui.components.SongArt
 import com.codetiger.mymusicapp.ui.components.StackedButton
+import com.codetiger.mymusicapp.ui.components.focusRing
 import com.codetiger.mymusicapp.ui.components.ToggleButton
 import com.codetiger.mymusicapp.ui.components.WideButton
 import com.codetiger.mymusicapp.ui.theme.MusicColors
@@ -157,6 +158,7 @@ fun NowPlayingScreen() {
 private fun TransportButton(label: String, @DrawableRes icon: Int, size: androidx.compose.ui.unit.Dp, main: Boolean, onClick: () -> Unit) {
     Column(
         Modifier
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .clickable(role = Role.Button, onClick = onClick)
             .semantics(mergeDescendants = true) {}
@@ -171,7 +173,7 @@ private fun TransportButton(label: String, @DrawableRes icon: Int, size: android
             Icon(
                 painterResource(icon), contentDescription = null,
                 tint = if (main) MusicColors.OnAccent else MusicColors.Ink,
-                modifier = Modifier.size(if (main) 56.dp else Size.IconLg),
+                modifier = Modifier.size(if (main) Size.IconXl else Size.IconLg),
             )
         }
         Text(label, style = MusicType.ControlLabel)
@@ -199,6 +201,7 @@ fun UpNextScreen() {
                     Row(
                         Modifier
                             .fillMaxWidth()
+                            .focusRing(Radius.Sm)
                             .clip(Radius.Sm)
                             .clickable(role = Role.Button, onClickLabel = "Play") { app.player.playQueueItem(position) }
                             .semantics(mergeDescendants = true) {},
@@ -212,9 +215,9 @@ fun UpNextScreen() {
                         }
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S2, Alignment.End)) {
-                        StackedButton("Up", R.drawable.ic_arrow_upward, { app.player.moveQueueItem(position, up = true) }, description = "Move ${song.title} up")
-                        StackedButton("Down", R.drawable.ic_arrow_downward, { app.player.moveQueueItem(position, up = false) }, description = "Move ${song.title} down")
-                        StackedButton("Remove", R.drawable.ic_close, { app.player.removeQueueItem(position) }, description = "Take ${song.title} out of Up Next")
+                        StackedButton("Move Up", R.drawable.ic_arrow_upward, { app.player.moveQueueItem(position, up = true) }, description = "Move ${song.title} up")
+                        StackedButton("Move Down", R.drawable.ic_arrow_downward, { app.player.moveQueueItem(position, up = false) }, description = "Move ${song.title} down")
+                        StackedButton("Take Out", R.drawable.ic_playlist_remove, { app.player.removeQueueItem(position) }, description = "Take ${song.title} out of Up Next")
                     }
                 }
             }

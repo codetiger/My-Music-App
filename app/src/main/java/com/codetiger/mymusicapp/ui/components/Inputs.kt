@@ -1,7 +1,6 @@
 package com.codetiger.mymusicapp.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,25 +20,22 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.unit.dp
 import com.codetiger.mymusicapp.R
 import com.codetiger.mymusicapp.ui.theme.MusicColors
 import com.codetiger.mymusicapp.ui.theme.MusicType
@@ -50,12 +46,11 @@ import com.codetiger.mymusicapp.ui.theme.Space
 /** The search box: flat `fill`, focus ring while typing, a labelled Clear when there is text. */
 @Composable
 fun SearchField(value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier) {
-    var focused by remember { mutableStateOf(false) }
     Row(
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = Size.Target)
-            .then(if (focused) Modifier.border(Size.FocusWidth, MusicColors.FocusRing, Radius.Md) else Modifier)
+            .focusRing(Radius.Md)
             .clip(Radius.Md)
             .background(MusicColors.Fill)
             .padding(start = Space.S4, end = Space.S2),
@@ -74,7 +69,6 @@ fun SearchField(value: String, onChange: (String) -> Unit, modifier: Modifier = 
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusChanged { focused = it.isFocused }
                     .semantics { contentDescription = "Search songs" },
             )
         }
@@ -84,7 +78,10 @@ fun SearchField(value: String, onChange: (String) -> Unit, modifier: Modifier = 
     }
 }
 
-/** A plain text box for names (Welcome, New List, Edit Name). */
+/**
+ * A plain text box for names (Welcome, New List, Edit Name). [hint] is a line under the box that
+ * answers a tap on Save with nothing typed, since a Message would sit behind a dialog.
+ */
 @Composable
 fun NameField(
     value: String,
@@ -94,8 +91,8 @@ fun NameField(
     onDone: () -> Unit = {},
     capitalization: KeyboardCapitalization = KeyboardCapitalization.Words,
     autoFocus: Boolean = false,
+    hint: String? = null,
 ) {
-    var focused by remember { mutableStateOf(false) }
     val focus = remember { FocusRequester() }
     if (autoFocus) LaunchedEffect(Unit) { focus.requestFocus() }
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.S2)) {
@@ -104,7 +101,7 @@ fun NameField(
             Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = Size.Target)
-                .then(if (focused) Modifier.border(Size.FocusWidth, MusicColors.FocusRing, Radius.Md) else Modifier)
+                .focusRing(Radius.Md)
                 .clip(Radius.Md)
                 .background(MusicColors.Fill)
                 .padding(horizontal = Space.S4, vertical = Space.S4),
@@ -113,16 +110,24 @@ fun NameField(
             BasicTextField(
                 value = value,
                 onValueChange = onChange,
-                textStyle = MusicType.Title.copy(color = MusicColors.Ink, fontWeight = androidx.compose.ui.text.font.FontWeight.Normal),
+                textStyle = MusicType.Input.copy(color = MusicColors.Ink),
                 cursorBrush = SolidColor(MusicColors.Ink),
                 keyboardOptions = KeyboardOptions(capitalization = capitalization, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onDone() }),
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focus)
-                    .onFocusChanged { focused = it.isFocused }
                     .semantics { contentDescription = label },
             )
+        }
+        if (hint != null) {
+            Row(
+                Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                horizontalArrangement = Arrangement.spacedBy(Space.S3),
+            ) {
+                Icon(painterResource(R.drawable.ic_info), contentDescription = null, tint = MusicColors.Ink, modifier = Modifier.size(Size.Icon))
+                Text(hint, style = MusicType.Body)
+            }
         }
     }
 }
@@ -148,6 +153,7 @@ fun <T> ChoicePills(
                 Row(
                     Modifier
                         .defaultMinSize(minHeight = Size.Target)
+                        .focusRing(Radius.Full)
                         .clip(Radius.Full)
                         .background(if (isSelected) MusicColors.Accent else MusicColors.Fill)
                         .selectable(isSelected, role = Role.RadioButton) { onSelect(value) }
@@ -156,9 +162,9 @@ fun <T> ChoicePills(
                     horizontalArrangement = Arrangement.spacedBy(Space.S2),
                 ) {
                     if (isSelected) {
-                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, tint = MusicColors.OnAccent, modifier = Modifier.size(24.dp))
+                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, tint = MusicColors.OnAccent, modifier = Modifier.size(Size.IconSm))
                     }
-                    Text(text, style = MusicType.ControlLabel, color = if (isSelected) MusicColors.OnAccent else MusicColors.Ink)
+                    Text(text, style = MusicType.Button, color = if (isSelected) MusicColors.OnAccent else MusicColors.Ink)
                 }
             }
         }

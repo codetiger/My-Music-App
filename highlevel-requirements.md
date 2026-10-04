@@ -33,15 +33,15 @@ Every screen does one job, uses big plain words, and forgives mistakes.
 
 | Principle | What it means in the app |
 | --- | --- |
-| See it easily | Body text 20 sp minimum, titles 28 sp. Contrast 7:1 (WCAG AAA). Follows the phone's text-size setting, plus an app Text Size choice in Settings. Titles wrap; text is never cut off. |
-| Hit it easily | Touch targets 64 × 64 dp minimum, 16 dp apart. Main Play button 96 dp. No swipe-only or long-press-only actions. |
+| See it easily | Body text 18 sp minimum (16 sp only for a word under an icon), titles 24 sp. Contrast 7:1 (WCAG AAA). One light cream theme, even when the phone is in dark mode. Follows the phone's text-size setting, plus an app Text Size choice in Settings. Titles wrap; text is never cut off. |
+| Hit it easily | Touch targets 64 × 64 dp minimum, 16 dp apart. Play / Pause disc and main buttons 96 dp. No swipe-only or long-press-only actions. |
 | Words, not just icons | Every button has an icon and a text label ("Play", "Next", "Add Song"). No jargon like "queue", "sync", "buffer". |
-| Few choices | One job per screen; its main action is the largest button, in the top half. Flat navigation: 2 bottom tabs (Home and Add Song) and a labelled **Settings** button in the title bar; no hidden menus or hamburger icon. |
+| Few choices | One job per screen; its main action is the largest button, in the top half. Flat navigation: 2 bottom tabs (Home and Add Song) and a labelled **Settings** button at the end of Home; no hidden menus or hamburger icon. |
 | Forgive mistakes | Removing a song or deleting a list asks first, then moves it to Recently Removed for 30 days, from where **Put Back** restores it. |
 | Always know where you are | Large screen title on every page. A "Now Playing" bar is always visible at the bottom. |
 | Plain messages | Short on-screen text ("Song saved on your phone", "No internet — this song will download later"). No error codes, no sounds or voice. |
 | Remember everything | App reopens exactly where it stopped: same song, same position, paused. It never starts sound by itself. |
-| Feels like their own | First launch asks "What is your name?" and for a photo. The app title becomes "Murali's Music App", and their photo, turned into a line drawing, becomes the logo in the title bar and on a home-screen shortcut. |
+| Feels like their own | First launch asks "What is your name?" and for a photo. The app title becomes "Murali's Music App", and their photo, turned into a line drawing, becomes the logo beside the title at the top of Home and on a home-screen shortcut. |
 
 ## 3. Feature map
 
@@ -72,19 +72,19 @@ Everything below ships in the first release; nothing is deferred.
 | FL-3 | Next screen asks "Add your photo?" with three buttons: **Take Photo**, **Choose Photo** and **Skip**. Take Photo opens the phone's camera app; Choose Photo uses Android's photo picker, so no camera or storage permission is needed. |
 | FL-4 | The app finds the face in the photo, crops it to a circle and redraws it as a line drawing of its outlines (face shape, eyes, glasses, hair) in dark lines on a light background, using the steps in section 7, *Photo to line drawing*. If no face is found, it uses the middle of the photo. This runs on the phone in about 2 s; the photo never leaves it. |
 | FL-5 | A preview shows the drawing large with **Use This** and **Try Again**. Only the drawing is kept; the original photo is not stored. Skipped, the app uses its standard music-note logo. |
-| FL-6 | The drawing appears as a 48 dp circle beside the app title in the title bar of every screen. |
+| FL-6 | The drawing appears as a 64 dp circle beside the personalised title at the top of Home, and in Settings. |
 | FL-7 | **Phone Setup** follows, one step per screen, each with a picture of what to tap, an **Open Settings** button that jumps to the right Android page, and **Skip**. When the user comes back, the app checks the result where Android allows it and shows a green tick. Steps: (1) **Allow updates** — let this app install its own updates ("Install unknown apps"); (2) **Keep music playing** — battery set to "No restrictions"; (3) on Xiaomi / Redmi / Poco only, **Autostart** on; (4) only if Android Auto is installed, **Use in the car** — written, numbered steps to turn on Android Auto's "Unknown sources" (Android Auto has no direct link to this page). The same steps can be run again from Settings → Phone Setup. |
 | FL-8 | After setup, Home shows the card "Put your picture on the home screen?" with **Add** and **No thanks**. **Add** asks Android to place a home-screen shortcut whose icon is the drawing; Android asks for one confirmation tap. Its short label is "<name>'s Music" when that is 12 characters or fewer ("Ravi's Music"), otherwise the name alone ("Murali's Music" is 14, so "Murali"); its long label is "Murali's Music App". The shortcut opens the app as normal. |
 | FL-9 | The app's own icon and label in the app list stay the standard logo and "My Music App"; Android does not let an installed app change its own icon or name. The home-screen shortcut is how the photo reaches the home screen. |
-| FL-10 | Changing the name or photo in Settings (SET-3) updates the title bar and the home-screen shortcut straight away. |
+| FL-10 | Changing the name or photo in Settings (SET-3) updates the top of Home and the home-screen shortcut straight away. |
 | FL-11 | The very first install (downloading the APK and letting the browser or file manager install it) happens before the app exists, so the app cannot guide it. A one-page install guide with pictures lives in the GitHub repo's README. |
 
 ### 4.2 Home
 
 | ID | Requirement |
 | --- | --- |
-| HOME-1 | The title bar shows the drawing, the personalised title and a labelled **Settings** button. The two tab screens (Home, Add Song) have it; other screens show **Back** instead. |
-| HOME-2 | One big Play button. When the user left a song part-way, it reads "Continue: \<song\>" and resumes the same queue. Otherwise it plays the default playlist and reads "Play Favourites" (or that list's name). |
+| HOME-1 | Home opens with the drawing and the personalised title, which scroll with the page. Tab screens (Home, Add Song) have no fixed top bar: the selected tab says where you are. Screens that are not tabs show a fixed **Back** bar with their title. A labelled **Settings** button closes Home, after the songs (SET-1). |
+| HOME-2 | No separate Play button: the Now Playing bar does it. When a song is playing or was left part-way, the bar shows it and resumes it. When nothing is loaded, the bar reads "Play Favourites" (or the default list's name) and plays that list. |
 | HOME-3 | Below it, "My Lists": big list tiles for Favourites, Recently Played, the user's own lists, and **+ New List**. There is no All Songs tile, because every song is listed further down Home (LIB-1). |
 | HOME-4 | At most one card is shown at a time, highest first: (1) "A new version is ready — Install" (UPD-3); (2) "Music may stop when the screen is off — Finish Setup" when a Phone Setup step the app can check is off; (3) "5 songs from WhatsApp or files couldn't be moved to this phone" with **See Names** and **OK** (SET-6); (4) "Tap Add Song to save your first song" on an empty library; (5) "Put your picture on the home screen?" (FL-8). Each card goes away once done or dismissed, and the next one shows. |
 | HOME-5 | The home-screen picture card is not shown on launchers that do not support pinned shortcuts. |
@@ -127,11 +127,11 @@ Everything below ships in the first release; nothing is deferred.
 | --- | --- |
 | PL-1 | Built-in lists that cannot be deleted: **All Songs**, **Favourites** and **Recently Played** (the last 50 different songs played, newest first). |
 | PL-2 | Favourites is a normal list: **Favourite** on the Song screen or Now Playing adds or removes a song, and Change Order works. |
-| PL-3 | Create, rename and delete own lists. A list's tile shows its first song's picture on a colour the app picks from a fixed set of high-contrast colours; an empty list shows a music note on its colour. Deleting asks "Delete this list? Songs stay in your library." and moves the list to Recently Removed for 30 days. |
+| PL-3 | Create, rename and delete own lists. All tiles use the same flat colour and are told apart by name, icon and the first song's picture; an empty list shows a music note. Deleting asks "Delete this list? Songs stay in your library." and moves the list to Recently Removed for 30 days. |
 | PL-4 | Add a song to a list from the Song screen via **Add to List**, then tap a big list tile. |
 | PL-5 | **Change Order** shows **Move Up / Move Down** buttons on each row of Favourites and own lists; drag is optional, never the only way. All Songs follows its sort; Recently Played follows play time. |
 | PL-6 | One song can sit in many lists; removing it from a list never deletes it from the library. |
-| PL-7 | **Default playlist** is Favourites unless changed in Settings. If the chosen list is deleted, it goes back to Favourites. If it is empty, the Home button plays All Songs and reads "Play All Songs". |
+| PL-7 | **Default playlist** is Favourites unless changed in Settings. If the chosen list is deleted, it goes back to Favourites. If it is empty, the Now Playing bar plays All Songs and reads "Play All Songs". |
 
 ### 4.6 Player
 
@@ -151,9 +151,9 @@ Everything below ships in the first release; nothing is deferred.
 
 | ID | Requirement |
 | --- | --- |
-| SET-1 | Opened from the **Settings** button in the title bar. Five items: Your Name and Photo, Text Size, Default Playlist, Storage (space used + Recently Removed), Phone Setup. |
+| SET-1 | Opened from the **Settings** button at the end of Home, after the songs; it is set up once, so it does not take a spot at the top. Home's notice cards still link straight to what they are about (Finish Setup). Five items: Your Name and Photo, Text Size, Default Playlist, Storage (space used + Recently Removed), Phone Setup. |
 | SET-2 | **Text Size:** **Normal**, **Large** or **Extra Large** (× 1.0, × 1.25, × 1.5), applied on top of the phone's own text size and capped at 2 × overall so nothing is cut off. A sample song row updates as the user taps. |
-| SET-3 | **Your Name and Photo** shows the name and the current drawing large, with four buttons: **Change Name**, **Take New Photo**, **Choose New Photo** and **Remove Photo**. A new photo goes through the same drawing and preview as first launch (**Use This** / **Try Again**); the old drawing stays until **Use This** is tapped. **Remove Photo** asks "Remove your photo?" and goes back to the music-note logo, in the title bar and on the home-screen shortcut. |
+| SET-3 | **Your Name and Photo** shows the name and the current drawing large, with four buttons: **Change Name**, **Take New Photo**, **Choose New Photo** and **Remove Photo**. A new photo goes through the same drawing and preview as first launch (**Use This** / **Try Again**); the old drawing stays until **Use This** is tapped. **Remove Photo** asks "Remove your photo?" and goes back to the music-note logo, at the top of Home and on the home-screen shortcut. |
 | SET-4 | **Storage** shows space used by songs and opens Recently Removed. Under 1 GB free on the phone, it and the Add Song screen show "Your phone is nearly full". |
 | SET-5 | Android Auto Backup saves the song list, playlists, settings and the photo drawing (a small image) to the user's Google account (under its 25 MB limit). Audio files, pictures and downloader files are excluded. |
 | SET-6 | On a new phone, the restored list re-downloads every song that came from a link. Songs from WhatsApp or files cannot be restored (no link, and their audio is not backed up); they are left out of the library and lists, and Home shows one card naming them (HOME-4). |
@@ -179,23 +179,23 @@ Seven screens cover everything the user does; each has one main button, shown in
 
 ```text
 +----------------------------------+   +----------------------------------+
-| (o) Murali's Music     [Settings]|   | (o) Murali's Music     [Settings]|
-|     App                          |   |     App                          |
-| +------------------------------+ |   | Songs                            |
-| | (>)  Continue: Song title    | |   | +------------------------------+ |
-| +------------------------------+ |   | | Search: type a name...       | |
-| My Lists                         |   | +------------------------------+ |
+| (o) Murali's Music App           |   |                                  |
+|                                  |   |                                  |
+| My Lists                         |   | Songs                            |
+| +-------------+ +--------------+ |   | +------------------------------+ |
+| | Favourites  | | Recently     | |   | | Search: type a name...       | |
+| |             | | Played       | |   | +------------------------------+ |
 | +-------------+ +--------------+ |   | Sort [A-Z] [Newest] [Most Played]|
-| | Favourites  | | Recently     | |   | [img] Song title 1          (>)  |
-| |             | | Played       | |   |       Artist name                |
+| +-------------+ +--------------+ |   | [img] Song title 1          (>)  |
+| | Temple Songs| | + New List   | |   |       Artist name                |
 | +-------------+ +--------------+ |   | [img] Song title 2          (>)  |
-| +-------------+ +--------------+ |   |       Artist · Downloading 40%   |
-| | Temple Songs| | + New List   | |   | [img] Song title 3          (>)  |
-| +-------------+ +--------------+ |   |       Artist · Download later    |
-| Songs                            |   | [img] Song title 4          (>)  |
-| +------------------------------+ |   |       Artist name                |
-| | Search: type a name...       | |   |                                  |
-| +------------------------------+ |   |                                  |
+| Songs                            |   |       Artist · Downloading 40%   |
+| +------------------------------+ |   | [img] Song title 3          (>)  |
+| | Search: type a name...       | |   |       Artist · Download later    |
+| +------------------------------+ |   | [img] Song title 4          (>)  |
+|                                  |   |       Artist name                |
+|                                  |   |                                  |
+|                                  |   |                                  |
 | [Now playing: Song title  Play ] |   | [Now playing: Song 1     Pause ] |
 |----------------------------------|   |----------------------------------|
 |      *Home*        Add Song      |   |      *Home*        Add Song      |
@@ -223,9 +223,9 @@ Seven screens cover everything the user does; each has one main button, shown in
                 SONG
 
 +----------------------------------+   +----------------------------------+
-| (o) Murali's Music     [Settings]|   | < Back         Favourites        |
-|     App                          |   | +-------------+ +--------------+ |
-| Add a Song                       |   | |  Play All   | |   Shuffle    | |
+| Add a Song                       |   | < Back         Favourites        |
+|                                  |   | +-------------+ +--------------+ |
+|                                  |   | |  Play All   | |   Shuffle    | |
 | +------------------------------+ |   | +-------------+ +--------------+ |
 | |          Paste Link          | |   | [img] Song title 1          (>)  |
 | |   Uses the link you copied   | |   |       Artist name                |
@@ -266,13 +266,13 @@ Seven screens cover everything the user does; each has one main button, shown in
               SETTINGS
 ```
 
-- Two bottom tabs only: **Home** and **Add Song**. Home holds both the lists and every song. Tapping the Now Playing bar opens the full player. **Settings** sits in the title bar of the two tab screens.
+- Two bottom tabs only: **Home** and **Add Song**. Home holds both the lists and every song. Tapping the Now Playing bar opens the full player. Tab screens have no fixed top bar: Home opens with the drawing and the personalised title, which scroll away with the page, and ends with a labelled **Settings** button after the songs; Add Song opens with "Add a Song". Screens that are not tabs keep a fixed **Back** bar with their title.
 - The main action sits in the top half of the screen and is the largest button there.
 - The title wraps to 2 lines when the name is long, as drawn; it is never shortened.
 - Home shows the personalised title from first launch, with the user's photo drawing `(o)` beside it. The Add Song preview card appears only after a link is pasted or shared; one more tap saves and downloads it.
 - Songs shared from WhatsApp open the same preview card with the file name as the title.
 - Tapping a song's name anywhere opens the Song screen; tapping its `(>)` plays it.
-- Sizes in the sketch are relative. On the phone, body text is 20 sp and buttons at least 64 dp tall (section 2).
+- Sizes in the sketch are relative. On the phone, body text is 18 sp and buttons at least 64 dp tall (section 2).
 
 ## 6. Non-functional requirements
 
@@ -362,7 +362,7 @@ flowchart LR
 | 4. Find outlines (XDoG) | Mark where brightness changes sharply: the edges of face, eyes, glasses, hair. | Blur the grey image twice: G₁ with radius σ and G₂ with radius k·σ. D = G₁ − τ·G₂. Each pixel's ink level = 1 (paper) if D ≥ ε, else 1 + tanh(φ·(D − ε)). Values on a 0–1 scale, tuned on real portraits: σ = 1.2 px, k = 2.0, τ = 0.99, ε = −0.005, φ = 100 (the starting values k = 1.6, τ = 0.98 gave faint, broken lines). Edges fade out beyond 30 % of the size from the centre (down to 40 % strength at the circle's edge), so background clutter drops away while the centred face stays. Flat areas stay white whatever their brightness, so the result is outlines, not shading. |
 | 5. Clean up lines | Remove specks and make lines bold enough to see. | Pixels below 0.5 count as ink, and faint pixels (below 0.9) touching a line join it, so dashes become strokes. Drop ink blobs smaller than about 80 px. Thicken lines by 1 px for the 512 px drawing; for the icon version run step 4 with σ = 2.0, drop blobs under 150 px and thicken by 2 px, so lines survive at small icon size. |
 | 6. Colour and circle | Draw dark ink on light paper inside a circle. | Ink #2B1D14 on paper #F7F0E4 (the app's own `ink` and `surface`, 14:1), circular mask and a ring 2.5 % of the diameter wide around the edge. |
-| 7. Save drawing and icon | Keep only the drawing; throw the photo away. | Save a 512 px PNG (title bar, Settings, preview) and a 432 px adaptive-icon PNG with the drawing inside the centre 66 % safe zone (home-screen shortcut, via `Icon.createWithAdaptiveBitmap`). Delete the temporary camera file and release the photo from memory. |
+| 7. Save drawing and icon | Keep only the drawing; throw the photo away. | Save a 512 px PNG (Home, Settings, preview) and a 432 px adaptive-icon PNG with the drawing inside the centre 66 % safe zone (home-screen shortcut, via `Icon.createWithAdaptiveBitmap`). Delete the temporary camera file and release the photo from memory. |
 
 The filter is about 200 lines of Kotlin using separable blurs, so a 512 px image takes well under a second on a mid-range Android 15 phone. If the prototype shows the drawings look poor, a small on-device line-art model (TensorFlow Lite, about 5 MB) can replace steps 3–4 at the cost of app size.
 
@@ -386,7 +386,7 @@ Favourites and own lists are Playlist rows with PlaylistSong entries; All Songs 
 | --- | --- |
 | Platform | Android 15+ phones only. Main target: Xiaomi / Redmi / Poco on HyperOS. Both trial users are on Android 15+. |
 | Scope | Minimum feature set; everything in section 4 ships in the first release. |
-| Navigation | Tabs: Home / Add Song. Home shows the lists and, below them, every song with search and sort; there is no separate Songs tab. A labelled Settings button in the title bar. A Song screen holds Favourite, Add to List, Edit Name and Remove. No fixed limit on actions per screen. |
+| Navigation | Tabs: Home / Add Song. Home shows the lists and, below them, every song with search and sort; there is no separate Songs tab. A labelled Settings button at the end of Home. A Song screen holds Favourite, Add to List, Edit Name and Remove. No fixed limit on actions per screen. |
 | Text size | Normal / Large / Extra Large in Settings, on top of the phone's setting, capped at 2 ×. |
 | Downloader | yt-dlp on the phone for every site, with QuickJS bundled; it updates itself from yt-dlp's GitHub Releases, separately from app updates. A new version is tested against the current one before use. |
 | Sites | YouTube (incl. Shorts) and YouTube Music, single videos only; Facebook public videos and reels; Instagram public reels and posts (best effort); direct .mp3 / .m4a links. Links are found inside any shared or pasted text. |
@@ -394,9 +394,9 @@ Favourites and own lists are Playlist rows with PlaylistSong entries; All Songs 
 | Adding songs | Preview card, then **Save Song**. Recordings over 1 hour ask first. Duplicates are matched by video ID or file fingerprint. |
 | Songs from links | Play straight away from the file as it downloads (data used once), plus automatic download for offline play. |
 | Downloads | Highest audio quality available, over any internet connection. Temporary failures retry for 7 days; permanent failures stop at once. |
-| Player | Tapping a song queues the rest of that list. Reopens paused; Home shows "Continue". Volume slider moves the phone's media volume. |
+| Player | Tapping a song queues the rest of that list. Reopens paused; the Now Playing bar resumes it. Volume slider moves the phone's media volume. |
 | Car | Bluetooth controls and Android Auto browsing. |
-| Playlists | Favourites is a normal list. List tiles use the first song's picture and an automatic colour. Default list falls back to Favourites, then All Songs. |
+| Playlists | Favourites is a normal list. List tiles all use one colour and show the first song's picture. Default list falls back to Favourites, then All Songs. |
 | Removing | Songs and lists go to Recently Removed for 30 days, with Put Back and Empty Now; re-adding a removed song puts it back. |
 | Storage | Audio in the app's private folder. |
 | Server and credentials | None. Every feature runs on the device; no API keys or site logins. |
@@ -407,7 +407,7 @@ Favourites and own lists are Playlist rows with PlaylistSong entries; All Songs 
 | Library size | Hundreds of songs, stored on the phone. |
 | Language | English. |
 | App name | "My Music App"; becomes "Murali's Music App" once the user enters their name. Long titles wrap to 2 lines. |
-| Personal logo | The user's photo becomes a line drawing on the phone, shown in the title bar and on an optional home-screen shortcut. The installed app icon stays standard because Android cannot change it. |
+| Personal logo | The user's photo becomes a line drawing on the phone, shown at the top of Home and on an optional home-screen shortcut. The installed app icon stays standard because Android cannot change it. |
 | Outside help | None. A standalone, self-help app with no family or remote features. |
 
 ### Risks

@@ -13,6 +13,7 @@ import com.codetiger.mymusicapp.add.LinkPreview
 import com.codetiger.mymusicapp.data.db.FailureReason
 import com.codetiger.mymusicapp.ui.Format
 import com.codetiger.mymusicapp.ui.IncomingShare
+import com.codetiger.mymusicapp.ui.components.MessageAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -86,9 +87,9 @@ class AddSongViewModel(private val app: AppContainer) : ViewModel() {
                 if (preview.putBack) {
                     messages.show("Song put back in your library", R.drawable.ic_restore_from_trash)
                 } else {
-                    messages.show("This song is already in your library", R.drawable.ic_library_music_filled, "Play") {
+                    messages.show("This song is already in your library", R.drawable.ic_library_music_filled, MessageAction("Play", R.drawable.ic_play_arrow) {
                         app.player.play(listOf(preview.song))
-                    }
+                    })
                 }
             }
             is LinkPreview.CannotSave -> {
@@ -113,9 +114,9 @@ class AddSongViewModel(private val app: AppContainer) : ViewModel() {
                     is FileCheck.AlreadyInLibrary -> if (check.putBack) {
                         messages.show("Song put back in your library", R.drawable.ic_restore_from_trash)
                     } else {
-                        messages.show("This song is already in your library", R.drawable.ic_library_music_filled, "Play") {
+                        messages.show("This song is already in your library", R.drawable.ic_library_music_filled, MessageAction("Play", R.drawable.ic_play_arrow) {
                             app.player.play(listOf(check.song))
-                        }
+                        })
                     }
                     FileCheck.NotAudio -> messages.show("This file isn't a song or a video.", R.drawable.ic_error)
                 }
@@ -186,9 +187,12 @@ class AddSongViewModel(private val app: AppContainer) : ViewModel() {
                 else -> {
                     val id = lastSongId
                     val text = if (saved == 1) "Song added. It is being saved on your phone." else "$saved songs added. They are being saved on your phone."
-                    messages.show(text, R.drawable.ic_downloading, if (saved == 1 && id != null) "Play" else null) {
-                        viewModelScope.launch { app.library.getSong(id!!)?.let { app.player.play(listOf(it)) } }
-                    }
+                    val play = if (saved == 1 && id != null) {
+                        MessageAction("Play", R.drawable.ic_play_arrow) {
+                            viewModelScope.launch { app.library.getSong(id)?.let { app.player.play(listOf(it)) } }
+                        }
+                    } else null
+                    messages.show(text, R.drawable.ic_downloading, play)
                 }
             }
         }

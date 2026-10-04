@@ -30,10 +30,12 @@ object MusicType {
     val SongHero = style(28, 34, 700)
     val Title = style(24, 30, 700)
     val ButtonHero = style(22, 28, 700)
+    val Input = style(24, 30, 400)
     val Heading = style(20, 26, 700)
     val Body = style(18, 26, 400)
     val BodyStrong = style(18, 26, 700)
-    val Time = style(18, 26, 500)
+    // Tabular figures, so the seek times don't shift as they count.
+    val Time = style(18, 26, 500).copy(fontFeatureSettings = "tnum")
     val Button = style(18, 24, 700)
     val ControlLabel = style(16, 20, 700)
 }
