@@ -89,6 +89,9 @@ fun AddSongScreen() {
             if (state.readingFiles) {
                 FlatCard { Text("Reading the file…", style = MusicType.Heading) }
             }
+            if (state.saving) {
+                FlatCard { Text("Saving on your phone…", style = MusicType.Heading) }
+            }
             val many = state.items.size > 1
             state.items.forEach { item -> PreviewCard(item, many, vm) }
             if (state.items.isNotEmpty()) {

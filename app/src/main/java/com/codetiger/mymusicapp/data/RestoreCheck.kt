@@ -19,10 +19,13 @@ class RestoreCheck(
     suspend fun run() {
         val songs = db.songs()
         val lost = mutableListOf<com.codetiger.mymusicapp.data.db.Song>()
+        val unfinished = mutableListOf<com.codetiger.mymusicapp.data.db.Song>()
         for (song in songs.everything()) {
             val thumbnailMissing = song.thumbnailPath != null && !File(song.thumbnailPath).exists()
             val audioMissing = song.downloadStatus == DownloadStatus.DONE && (song.filePath == null || !File(song.filePath).exists())
             when {
+                // A file import stopped part way (older versions added the song first): nothing can finish it.
+                !song.sourceType.isLink && song.downloadStatus != DownloadStatus.DONE -> unfinished += song
                 audioMissing && song.sourceType.isLink -> {
                     songs.update(song.copy(filePath = null, fileSize = 0, thumbnailPath = null, downloadStatus = DownloadStatus.QUEUED, downloadProgress = 0))
                     if (song.removedAt == null) scheduler.enqueue(song.id)
@@ -31,6 +34,7 @@ class RestoreCheck(
                 thumbnailMissing -> songs.update(song.copy(thumbnailPath = null))
             }
         }
+        if (unfinished.isNotEmpty()) library.deleteSongsNow(unfinished)
         if (lost.isNotEmpty()) {
             val names = lost.filter { it.removedAt == null }.map { it.title }
             library.deleteSongsNow(lost)

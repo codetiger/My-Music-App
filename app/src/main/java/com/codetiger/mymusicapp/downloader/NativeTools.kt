@@ -40,8 +40,14 @@ class NativeTools(private val context: Context) {
     suspend fun ensureInitialized() = initLock.withLock {
         if (initialized) return@withLock
         withContext(Dispatchers.IO) {
-            YoutubeDL.getInstance().init(context)
-            FFmpeg.getInstance().init(context)
+            try {
+                YoutubeDL.getInstance().init(context)
+                FFmpeg.getInstance().init(context)
+            } catch (e: Exception) {
+                // YoutubeDLException is not an IOException: report it like a tool that couldn't start,
+                // so callers handle it as "try later" instead of crashing.
+                throw ToolException("Could not unpack the tools", e)
+            }
         }
         initialized = true
     }

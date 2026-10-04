@@ -12,6 +12,7 @@ import com.codetiger.mymusicapp.data.db.Song
 import com.codetiger.mymusicapp.data.db.SourceType
 import com.codetiger.mymusicapp.downloader.NativeTools
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -87,37 +88,40 @@ class FileImporter(
         )
     }
 
-    /** Copies the file into the app (keeping only the audio of a video) and adds it. */
+    /**
+     * Copies the file into the app (keeping only the audio of a video) and adds it. The song is
+     * added only once its audio is ready, so an import that is stopped part way never leaves a
+     * song stuck at "Downloading 0%": nothing would ever finish it.
+     */
     suspend fun save(preview: FilePreview): Long = withContext(Dispatchers.IO) {
-        val id = songs.insert(
-            Song(
-                title = preview.title,
-                sourceType = preview.sourceType,
-                fileHash = preview.hash,
-                downloadStatus = DownloadStatus.DOWNLOADING,
-                durationMs = preview.durationMs,
-                addedAt = System.currentTimeMillis(),
-            ),
-        )
+        val ready = File(files.importDir, "audio-${System.nanoTime()}.${preview.ext}")
         try {
-            val target = files.audioFile(id, preview.ext)
-            if (preview.isVideo) extractAudio(preview.uri, target) else copy(preview.uri, target)
-            val picture = savePicture(id, target)
-            val song = checkNotNull(songs.get(id))
-            songs.update(
-                song.copy(
-                    filePath = target.absolutePath,
-                    fileSize = target.length(),
-                    thumbnailPath = picture?.absolutePath,
+            if (preview.isVideo) extractAudio(preview.uri, ready) else copy(preview.uri, ready)
+            val id = songs.insert(
+                Song(
+                    title = preview.title,
+                    artist = artistOf(ready).orEmpty(),
+                    sourceType = preview.sourceType,
+                    fileHash = preview.hash,
                     downloadStatus = DownloadStatus.DONE,
                     downloadProgress = 100,
-                    artist = artistOf(target).orEmpty(),
+                    durationMs = preview.durationMs,
+                    addedAt = System.currentTimeMillis(),
                 ),
             )
-            id
-        } catch (e: Exception) {
-            songs.get(id)?.let { library.deleteSongsNow(listOf(it)) }
-            throw e
+            try {
+                val target = files.audioFile(id, preview.ext)
+                if (!ready.renameTo(target)) ready.copyTo(target, overwrite = true)
+                val picture = savePicture(id, target)
+                val song = checkNotNull(songs.get(id))
+                songs.update(song.copy(filePath = target.absolutePath, fileSize = target.length(), thumbnailPath = picture?.absolutePath))
+                id
+            } catch (e: Exception) {
+                withContext(NonCancellable) { songs.get(id)?.let { library.deleteSongsNow(listOf(it)) } }
+                throw e
+            }
+        } finally {
+            ready.delete()
         }
     }
 

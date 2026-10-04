@@ -10,6 +10,7 @@ import com.codetiger.mymusicapp.downloader.DownloadError
 import com.codetiger.mymusicapp.downloader.MediaInfo
 import com.codetiger.mymusicapp.downloader.YtDlp
 import com.codetiger.mymusicapp.util.DebugLog
+import kotlinx.coroutines.CancellationException
 
 /** What the Add Song screen shows for one link. */
 sealed interface LinkPreview {
@@ -46,7 +47,9 @@ class SongAdder(
             return LinkPreview.CannotSave(link, e.reason)
         } catch (e: DownloadError.Offline) {
             return LinkPreview.Later(link, offline = true)
-        } catch (e: java.io.IOException) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             DebugLog.e("Reading ${link.url} failed", e)
             // Site trouble, or the downloader couldn't start: it can still be saved for later.
             return LinkPreview.Later(link, offline = false)

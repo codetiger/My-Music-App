@@ -162,7 +162,8 @@ class AddSongViewModel(private val app: AppContainer) : ViewModel() {
             }
         }
         _state.update { it.copy(saving = true, askLong = null) }
-        viewModelScope.launch {
+        // App scope: leaving Add Song while a video is being copied must not stop the save.
+        app.scope.launch {
             var saved = 0
             var lastSongId: Long? = null
             var offline = false
@@ -189,7 +190,7 @@ class AddSongViewModel(private val app: AppContainer) : ViewModel() {
                     val text = if (saved == 1) "Song added. It is being saved on your phone." else "$saved songs added. They are being saved on your phone."
                     val play = if (saved == 1 && id != null) {
                         MessageAction("Play", R.drawable.ic_play_arrow) {
-                            viewModelScope.launch { app.library.getSong(id)?.let { app.player.play(listOf(it)) } }
+                            app.scope.launch { app.library.getSong(id)?.let { app.player.play(listOf(it)) } }
                         }
                     } else null
                     messages.show(text, R.drawable.ic_downloading, play)
