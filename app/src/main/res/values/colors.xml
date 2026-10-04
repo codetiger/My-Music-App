@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Window and launcher colours from design-system/tokens.json. Compose uses ui/theme/Color.kt. -->
+<resources>
+    <color name="surface">#FFF7F0E4</color>
+    <color name="accent">#FF6B4423</color>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android Auto Backup (SET-5): keep the database, settings and the photo drawing;
+    leave out audio files, song pictures and downloader files. Audio and pictures will
+    live under files/audio and files/pictures, the downloader under no_backup.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="audio/" />
+        <exclude domain="file" path="pictures/" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="audio/" />
+        <exclude domain="file" path="pictures/" />
+    </device-transfer>
+</data-extraction-rules>

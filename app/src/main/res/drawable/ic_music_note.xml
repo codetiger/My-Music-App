@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Symbols Rounded "music_note", weight 500 (Apache-2.0) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="#FF2B1D14"
+            android:pathData="M281.72-158q-44.7-44.7-44.7-109.37t44.7-109.37q44.69-44.69 109.37-44.69 26.8 0 48.23 7.4 21.42 7.4 37.7 20.44v-419.04q0-14.67 9.7-24.49 9.69-9.81 24.37-9.81h178.06q14.68 0 24.37 9.81 9.7 9.82 9.7 24.49v75q0 14.67-9.7 24.37-9.69 9.69-24.37 9.69h-144v436.2q0 64.67-44.69 109.37-44.7 44.7-109.37 44.7-64.68 0-109.37-44.7Z" />
+    </group>
+</vector>
